@@ -1,0 +1,21 @@
+{{ config(materialized='view') }}
+
+with source as (
+    select * from {{ source('bronze', 'flights_raw') }}
+),
+
+renamed as (
+    select
+        cast(fl_date as date)              as flight_date,
+        op_carrier                          as carrier_code,
+        origin                              as origin_airport,
+        dest                                as dest_airport,
+        try_cast(dep_delay as int)          as dep_delay_minutes,
+        try_cast(arr_delay as int)          as arr_delay_minutes,
+        cancelled = '1'                     as is_cancelled,
+        _ingested_at,
+        _source_file
+    from source
+)
+
+select * from renamed

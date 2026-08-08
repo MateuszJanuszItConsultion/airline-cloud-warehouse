@@ -1,0 +1,33 @@
+version: 2
+
+models:
+  - name: stg_flights
+    description: "Cleaned flight records from the BTS source, one row per flight."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - flight_date
+              - carrier_code
+              - origin_airport
+              - dest_airport
+    columns:
+      - name: flight_date
+        description: "The date the flight took place"
+        tests:
+          - not_null
+
+      - name: carrier_code
+        description: "IATA carrier code"
+        tests:
+          - not_null
+
+      - name: origin_airport
+        description: "Origin airport code"
+        tests:
+          - not_null
+
+      - name: dest_airport
+        description: "Destination airport code"
+        tests:
+          - not_null

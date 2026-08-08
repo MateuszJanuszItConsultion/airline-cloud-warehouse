@@ -1,0 +1,8 @@
+version: 2
+
+sources:
+  - name: bronze
+    catalog: airline_cloud_warehouse
+    schema: bronze
+    tables:
+      - name: flights_raw
