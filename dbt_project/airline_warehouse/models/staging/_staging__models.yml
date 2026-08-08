@@ -3,14 +3,11 @@ version: 2
 models:
   - name: stg_flights
     description: "Cleaned flight records from the BTS source, one row per flight."
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          arguments:
-            combination_of_columns:
-              - flight_date
-              - carrier_code
-              - origin_airport
-              - dest_airport
+
+    # TODO: re-add uniqueness test once flight_number column is added to stg_flights
+    # BTS data has multiple flights/day per carrier+route pair, current combination
+    # of columns is not a valid business key
+    
     columns:
       - name: flight_date
         description: "The date the flight took place"
