@@ -1,40 +1,36 @@
 import argparse
 import pandas as pd
 import numpy as np
-from datetime import datetime, timedelta
+from datetime import datetime
 
 AIRPORTS = ['JFK', 'LAX', 'ORD', 'DFW', 'DEN', 'SFO', 'ATL', 'MIA']
 
 
 def generate_weather(run_date: datetime, output_dir: str = "data"):
-    np.random.seed(int(run_date.strftime("%Y%m%d")) + 1)  # +1 to differentiate from flight data generation
-
-    start_date = run_date - timedelta(days=6)
-    dates = [start_date + timedelta(days=i) for i in range(7)]
+    np.random.seed(int(run_date.strftime("%Y%m%d")) + 1)
 
     rows = []
-    for d in dates:
-        for airport in AIRPORTS:
-            avg_temp_c = np.random.normal(loc=15, scale=10)
-            precipitation_mm = max(0, np.random.exponential(scale=3))
-            avg_wind_speed_kmh = max(0, np.random.normal(loc=15, scale=8))
-            visibility_km = np.clip(np.random.normal(loc=12, scale=4), 0.5, 20)
-            has_severe_weather = int(precipitation_mm > 8 or avg_wind_speed_kmh > 30 or visibility_km < 2)
+    for airport in AIRPORTS:
+        avg_temp_c = np.random.normal(loc=15, scale=10)
+        precipitation_mm = max(0, np.random.exponential(scale=3))
+        avg_wind_speed_kmh = max(0, np.random.normal(loc=15, scale=8))
+        visibility_km = np.clip(np.random.normal(loc=12, scale=4), 0.5, 20)
+        has_severe_weather = int(precipitation_mm > 8 or avg_wind_speed_kmh > 30 or visibility_km < 2)
 
-            rows.append({
-                'OBS_DATE': d.strftime('%Y-%m-%d'),
-                'AIRPORT_CODE': airport,
-                'AVG_TEMP_C': round(avg_temp_c, 1),
-                'PRECIPITATION_MM': round(precipitation_mm, 1),
-                'AVG_WIND_SPEED_KMH': round(avg_wind_speed_kmh, 1),
-                'VISIBILITY_KM': round(visibility_km, 1),
-                'HAS_SEVERE_WEATHER': has_severe_weather,
-            })
+        rows.append({
+            'OBS_DATE': run_date.strftime('%Y-%m-%d'),
+            'AIRPORT_CODE': airport,
+            'AVG_TEMP_C': round(avg_temp_c, 1),
+            'PRECIPITATION_MM': round(precipitation_mm, 1),
+            'AVG_WIND_SPEED_KMH': round(avg_wind_speed_kmh, 1),
+            'VISIBILITY_KM': round(visibility_km, 1),
+            'HAS_SEVERE_WEATHER': has_severe_weather,
+        })
 
     df = pd.DataFrame(rows)
     output_path = f"{output_dir}/weather_{run_date:%Y%m%d}.parquet"
     df.to_parquet(output_path, index=False)
-    print(f"Generated {len(df)} weather rows for week ending {run_date.date()} -> {output_path}")
+    print(f"Generated {len(df)} weather rows for {run_date.date()} -> {output_path}")
     return output_path
 
 
