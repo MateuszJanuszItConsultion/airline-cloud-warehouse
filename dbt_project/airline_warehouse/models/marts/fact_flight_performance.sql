@@ -2,6 +2,7 @@
 {{ config(materialized='table') }}
 
 select
+    cast(date_format(flight_date, 'yyyyMMdd') as int) as date_key,
     flight_date,
     carrier_code,
     flight_number,
