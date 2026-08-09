@@ -90,3 +90,29 @@ models:
         tests:
           - unique
           - not_null 
+          
+  - name: fact_weather_observation
+    description: "Fact table with one row per airport per day, capturing weather metrics."
+    columns:
+      - name: date_key
+        description: "Foreign key to dim_date"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+      - name: airport_code
+        description: "Airport code where the observation was recorded, foreign key to dim_airport"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_airport')
+                field: airport_code
+
+      - name: has_severe_weather
+        description: "Whether severe weather conditions were recorded"
+        tests:
+          - not_null
