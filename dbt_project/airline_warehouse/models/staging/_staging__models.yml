@@ -33,3 +33,22 @@ models:
         description: "Destination airport code"
         tests:
           - not_null
+
+  - name: stg_weather
+    description: "Cleaned daily weather observations per airport."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - observation_date
+              - airport_code
+    columns:
+      - name: observation_date
+        description: "Date of the weather observation"
+        tests:
+          - not_null
+
+      - name: airport_code
+        description: "IATA airport code where the observation was recorded"
+        tests:
+          - not_null
