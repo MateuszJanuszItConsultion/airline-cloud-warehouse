@@ -38,4 +38,7 @@ models:
       +schema: gold
       +materialized: table
 
+seeds:
+  airline_warehouse:
+    +schema: gold
 

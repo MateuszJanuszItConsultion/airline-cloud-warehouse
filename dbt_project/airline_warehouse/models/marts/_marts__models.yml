@@ -19,16 +19,6 @@ models:
         tests:
           - not_null
 
-      - name: origin_airport
-        description: "Origin airport code"
-        tests:
-          - not_null
-
-      - name: dest_airport
-        description: "Destination airport code"
-        tests:
-          - not_null
-
       - name: is_cancelled
         description: "Whether the flight was cancelled"
         tests:
@@ -45,6 +35,24 @@ models:
               arguments:
                 to: ref('dim_date')
                 field: date_key
+      
+      - name: origin_airport
+        description: "Origin airport code, foreign key to dim_airport"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_airport')
+                field: airport_code
+
+      - name: dest_airport
+        description: "Destination airport code, foreign key to dim_airport"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_airport')
+                field: airport_code      
 
   - name: dim_date
     description: "Date dimension with calendar attributes, one row per day."
@@ -57,6 +65,15 @@ models:
 
       - name: date_key
         description: "Surrogate key in YYYYMMDD integer format"
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_airport
+    description: "Airport reference dimension, sourced from a static seed file."
+    columns:
+      - name: airport_code
+        description: "IATA airport code"
         tests:
           - unique
           - not_null
