@@ -29,10 +29,14 @@ cancelled = np.random.choice([0, 1], size=n_rows, p=[0.98, 0.02])
 dep_delays = [None if c == 1 else d for d, c in zip(dep_delays, cancelled)]
 arr_delays = [None if c == 1 else a for a, c in zip(arr_delays, cancelled)]
 
+#Numer lotu: 3-4 cyfrowa liczba
+flight_numbers = np.random.randint(100, 9999, size=n_rows)
+
 # Utworzenie DataFrame
 df = pd.DataFrame({
     'FL_DATE': [d.strftime('%Y-%m-%d') for d in dates],
     'OP_CARRIER': np.random.choice(carriers, size=n_rows),
+    'OP_FL_NUM': flight_numbers,
     'ORIGIN': origins,
     'DEST': destinations,
     'DEP_DELAY': dep_delays,

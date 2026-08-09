@@ -6,8 +6,9 @@ with source as (
 
 renamed as (
     select
-        cast(fl_date as date)              as flight_date,
+        cast(fl_date as date)               as flight_date,
         op_carrier                          as carrier_code,
+        op_carrier_fl_num                   as flight_number,
         origin                              as origin_airport,
         dest                                as dest_airport,
         try_cast(dep_delay as int)          as dep_delay_minutes,
