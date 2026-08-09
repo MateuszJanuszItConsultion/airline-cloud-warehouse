@@ -17,12 +17,11 @@ DBT_TASK_JSON = {
     },
     "tasks": [
         {
-            "task_key": "dbt_run_staging",
+            "task_key": "dbt_build_all",
             "dbt_task": {
                 "commands": [
                     "dbt deps",
-                    "dbt run --select stg_flights",
-                    "dbt test --select stg_flights",
+                    "dbt build",
                 ],
                 "project_directory": "dbt_project/airline_warehouse",
                 "warehouse_id": WAREHOUSE_ID,
