@@ -45,7 +45,7 @@ DBT_TASK_JSON = {
 @dag(
     dag_id="dbt_databricks_job_dag",
     start_date=datetime(2026, 8, 1),
-    schedule=None,
+    schedule="0 6 * * *",
     catchup=False,
     tags=["dbt", "databricks", "job"],
 )
