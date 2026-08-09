@@ -11,6 +11,7 @@ from pendulum import datetime
 
 from ingestion.generate_random_flights import generate_flights
 from ingestion.generate_weather_data import generate_weather
+from datetime import timedelta
 
 WAREHOUSE_ID = Variable.get("DATABRICKS_WAREHOUSE_ID")
 CATALOG = Variable.get("DATABRICKS_CATALOG")
@@ -21,7 +22,7 @@ FLIGHTS_VOLUME_PATH = "/Volumes/airline_cloud_warehouse/bronze/airline_bronze_ra
 WEATHER_VOLUME_PATH = "/Volumes/airline_cloud_warehouse/bronze/airline_bronze_raw_files/weather"
 
 def upload_to_volume(local_path: str, volume_path: str):
-    conn = BaseHook.get_connection("databricks_default")
+    conn = BaseHook.get_connection("databricks")
     client = WorkspaceClient(host=conn.host, token=conn.password)
 
     file_name = local_path.split("/")[-1]
@@ -38,6 +39,10 @@ def upload_to_volume(local_path: str, volume_path: str):
     schedule="0 6 * * *",
     catchup=False,
     tags=["extraction", "dbt", "databricks"],
+    default_args={
+        "retries": 2,
+        "retry_delay": timedelta(minutes=5),
+    },
 )
 def extraction_and_dbt_dag():
 
@@ -54,7 +59,7 @@ def extraction_and_dbt_dag():
         upload_to_volume(local_path, WEATHER_VOLUME_PATH)
 
     load_flights_to_bronze = DatabricksSqlOperator(
-        task_id="load_to_bronze",
+        task_id="load_flights_to_bronze",
         databricks_conn_id="databricks",
         http_path=f"/sql/1.0/warehouses/{WAREHOUSE_ID}",
         sql=f"""
@@ -79,7 +84,7 @@ def extraction_and_dbt_dag():
 
     load_weather_to_bronze = DatabricksSqlOperator(
         task_id="load_weather_to_bronze",
-        databricks_conn_id="databricks_default",
+        databricks_conn_id="databricks",
         http_path=f"/sql/1.0/warehouses/{WAREHOUSE_ID}",
         sql=f"""
             COPY INTO {CATALOG}.bronze.weather_raw

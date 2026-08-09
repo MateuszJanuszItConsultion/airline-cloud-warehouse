@@ -29,5 +29,4 @@ FROM (
   FROM '/Volumes/airline_cloud_warehouse/bronze/airline_bronze_raw_files/sample_flights.csv'
 )
 FILEFORMAT = CSV
-FORMAT_OPTIONS ('header' = 'true', 'inferSchema' = 'false')
-COPY_OPTIONS ('force' = 'true');
+FORMAT_OPTIONS ('header' = 'true', 'inferSchema' = 'false');
