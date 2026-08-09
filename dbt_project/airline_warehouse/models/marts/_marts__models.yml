@@ -1,0 +1,38 @@
+version: 2
+
+models:
+  - name: fact_flight_performance
+    description: "Fact table with one row per flight, capturing delay and cancellation metrics."
+    columns:
+      - name: flight_date
+        description: "The date the flight took place"
+        tests:
+          - not_null
+
+      - name: carrier_code
+        description: "IATA carrier code"
+        tests:
+          - not_null
+
+      - name: flight_number
+        description: "Flight number assigned by the operating carrier"
+        tests:
+          - not_null
+
+      - name: origin_airport
+        description: "Origin airport code"
+        tests:
+          - not_null
+
+      - name: dest_airport
+        description: "Destination airport code"
+        tests:
+          - not_null
+
+      - name: is_cancelled
+        description: "Whether the flight was cancelled"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [true, false]
