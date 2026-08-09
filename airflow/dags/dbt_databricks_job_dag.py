@@ -1,3 +1,9 @@
+"""
+DEPRECATED: Superseded by extraction_and_dbt_dag.py, which includes
+the full extraction step (generate + upload + load to bronze) before
+running dbt build. Kept paused for reference/comparison.
+"""
+
 from airflow.decorators import dag
 from airflow.providers.databricks.operators.databricks import DatabricksSubmitRunOperator
 from airflow.models import Variable
