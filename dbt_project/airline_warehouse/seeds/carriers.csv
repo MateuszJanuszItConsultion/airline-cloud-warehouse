@@ -1,0 +1,6 @@
+carrier_code,carrier_name,carrier_type
+AA,American Airlines,Legacy
+DL,Delta Air Lines,Legacy
+UA,United Airlines,Legacy
+WN,Southwest Airlines,Low-cost
+B6,JetBlue Airways,Low-cost

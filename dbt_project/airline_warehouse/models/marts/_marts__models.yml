@@ -13,6 +13,10 @@ models:
         description: "IATA carrier code"
         tests:
           - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_carrier')
+                field: carrier_code
 
       - name: flight_number
         description: "Flight number assigned by the operating carrier"
@@ -77,3 +81,12 @@ models:
         tests:
           - unique
           - not_null
+          
+  - name: dim_carrier
+    description: "Airline carrier reference dimension, sourced from a static seed file."
+    columns:
+      - name: carrier_code
+        description: "IATA carrier code"
+        tests:
+          - unique
+          - not_null 
