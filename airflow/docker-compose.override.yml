@@ -1,0 +1,6 @@
+version: '3'
+services:
+  scheduler:
+    volumes:
+      - ../ingestion:/usr/local/airflow/ingestion
+      - ../data:/usr/local/airflow/data
