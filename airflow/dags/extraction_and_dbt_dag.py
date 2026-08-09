@@ -11,7 +11,7 @@ from pendulum import datetime
 
 from ingestion.generate_random_flights import generate_flights
 from ingestion.generate_weather_data import generate_weather
-from datetime import timedelta
+from datetime import timedelta 
 
 WAREHOUSE_ID = Variable.get("DATABRICKS_WAREHOUSE_ID")
 CATALOG = Variable.get("DATABRICKS_CATALOG")
