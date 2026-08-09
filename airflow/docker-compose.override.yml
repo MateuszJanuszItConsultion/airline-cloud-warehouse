@@ -1,0 +1,21 @@
+version: '3'
+services:
+  scheduler:
+    volumes:
+      - ../ingestion:/usr/local/airflow/ingestion
+      - ../data:/usr/local/airflow/data
+
+  dag-processor:
+    volumes:
+      - ../ingestion:/usr/local/airflow/ingestion
+      - ../data:/usr/local/airflow/data
+
+  triggerer:
+    volumes:
+      - ../ingestion:/usr/local/airflow/ingestion
+      - ../data:/usr/local/airflow/data
+
+  api-server:
+    volumes:
+      - ../ingestion:/usr/local/airflow/ingestion
+      - ../data:/usr/local/airflow/data
