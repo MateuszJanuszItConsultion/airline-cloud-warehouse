@@ -52,3 +52,22 @@ models:
         description: "IATA airport code where the observation was recorded"
         tests:
           - not_null
+
+  - name: stg_aircraft_utilization
+    description: "Cleaned daily aircraft utilization metrics."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - flight_date
+              - aircraft_key
+    columns:
+      - name: flight_date
+        description: "The date of the aircraft utilization record"
+        tests:
+          - not_null
+
+      - name: aircraft_key
+        description: "Unique identifier for the aircraft"
+        tests:
+          - not_null

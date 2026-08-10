@@ -116,3 +116,41 @@ models:
         description: "Whether severe weather conditions were recorded"
         tests:
           - not_null
+
+  - name: dim_aircraft
+    description: "Airline aircraft reference dimension, sourced from a static seed file."
+    columns:
+      - name: tail_number
+        description: "Tail number of the aircraft"
+        tests:
+          - unique
+          - not_null
+  - name: fact_aircraft_utilization
+    description: "Fact table with one row per aircraft per day, capturing utilization metrics." 
+    columns:
+      - name: date_key
+        description: "Foreign key to dim_date"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+      - name: aircraft_key
+        description: "Foreign key to dim_aircraft"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_aircraft')
+                field: tail_number
+
+      - name: airport_code
+        description: "Airport code associated with the aircraft that day, foreign key to dim_airport"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_airport')
+                field: airport_code

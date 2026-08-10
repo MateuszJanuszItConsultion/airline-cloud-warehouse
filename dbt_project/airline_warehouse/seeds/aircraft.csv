@@ -1,0 +1,21 @@
+tail_number,serial_number,manufacturer,model,variant,body_type,icao_code,iata_code,manufacture_year,delivery_date,total_seat_capacity,first_class_seats,business_class_seats,economy_class_seats,max_takeoff_weight_kg,range_km,operator_airline,status
+N104NN,40578,Boeing,737,737-800,Narrowbody,B738,738,2013,2013-04-12,160,16,0,144,79010,5436,American Airlines,Active
+N802DN,29121,Boeing,737,737-900ER,Narrowbody,B739,739,2015,2015-08-20,180,20,21,139,85139,5460,Delta Air Lines,Active
+SP-LRA,35938,Boeing,787,787-8,Widebody,B788,788,2012,2012-11-15,252,0,18,234,227930,13620,LOT Polish Airlines,Active
+SP-LVD,62312,Boeing,737,737 MAX 8,Narrowbody,B38M,7M8,2018,2018-06-28,186,0,0,186,82191,6570,LOT Polish Airlines,Active
+G-XWBA,124,Airbus,A350,A350-1000,Widebody,A35K,351,2019,2019-07-26,331,0,56,275,316000,16100,British Airways,Active
+D-AIMA,038,Airbus,A380,A380-800,Widebody,A388,388,2010,2010-05-19,509,8,78,423,575000,15200,Lufthansa,Stored
+F-HTYA,001,Airbus,A350,A350-900,Widebody,A359,359,2019,2019-09-24,324,0,34,290,280000,15000,Air France,Active
+OE-LWA,1900001,Embraer,E190,E190-200,Regional,E190,E90,2011,2011-03-10,120,0,12,108,51800,4537,Austrian Airlines,Active
+N789UA,38021,Boeing,777,777-300ER,Widebody,B77W,773,2016,2016-12-21,366,0,60,306,351533,13649,United Airlines,Active
+A6-EEO,136,Airbus,A380,A380-800,Widebody,A388,388,2013,2013-11-28,517,14,76,427,575000,15200,Emirates,Active
+HB-JJA,0421,Airbus,A320,A320neo,Narrowbody,A20N,32N,2020,2020-02-14,180,0,0,180,79000,6300,Swiss Int. Air Lines,Active
+EI-DCL,33544,Boeing,737,737-800,Narrowbody,B738,738,2004,2004-10-05,189,0,0,189,79010,5436,Ryanair,Retired
+WZ-A321,10200,Airbus,A321,A321neo,Narrowbody,A21N,321,2021,2021-05-11,239,0,0,239,97000,7400,Wizz Air,Active
+B-18001,35281,Boeing,777,777-300ER,Widebody,B77W,773,2014,2014-09-18,358,0,40,318,351533,13649,China Airlines,Active
+VH-VZW,34200,Boeing,737,737-800,Narrowbody,B738,738,2011,2011-07-01,174,0,12,162,79010,5436,Qantas,Active
+C-GHPQ,40801,Boeing,787,787-9,Widebody,B789,789,2017,2017-04-03,298,0,30,268,254011,14140,Air Canada,Active
+JA801A,34488,Boeing,787,787-8,Widebody,B788,788,2011,2011-09-25,224,0,32,192,227930,13620,ANA,Active
+LN-RRG,35610,Boeing,737,737-700,Narrowbody,B737,737,2007,2007-02-18,141,0,0,141,70080,6230,SAS,Retired
+PH-BVA,35972,Boeing,777,777-300ER,Widebody,B77W,773,2008,2008-02-12,408,0,35,373,351533,13649,KLM,Maintenance
+SP-LMA,1900003,Embraer,E170,E170-100,Regional,E170,E70,2004,2004-03-08,76,0,0,76,37200,3982,LOT Polish Airlines,Active
