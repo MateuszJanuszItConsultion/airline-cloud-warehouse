@@ -17,6 +17,6 @@ select
     economy_class_seats,
     max_takeoff_weight_kg,
     range_km,
-    operator_airline,
+    operator_airline, 
     status
 from {{ ref('aircraft') }}
