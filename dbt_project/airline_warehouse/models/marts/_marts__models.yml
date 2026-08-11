@@ -90,7 +90,56 @@ models:
         tests:
           - unique
           - not_null 
-          
+      - name: serial_number
+        description: "Manufacturer serial number of the aircraft"
+
+      - name: manufacturer
+        description: "Aircraft manufacturer (e.g. Boeing, Airbus, Embraer)"
+
+      - name: model
+        description: "Aircraft model family (e.g. 737, A350)"
+
+      - name: variant
+        description: "Specific variant/subtype within the model family (e.g. 737-800, A350-1000)"
+
+      - name: body_type
+        description: "Fuselage category: Narrowbody, Widebody, or Regional"
+
+      - name: icao_code
+        description: "ICAO aircraft type designator"
+
+      - name: iata_code
+        description: "IATA aircraft type designator"
+
+      - name: manufacture_year
+        description: "Year the aircraft was manufactured"
+
+      - name: delivery_date
+        description: "Date the aircraft was delivered to its operator"
+
+      - name: total_seat_capacity
+        description: "Total number of seats across all cabin classes"
+
+      - name: first_class_seats
+        description: "Number of first class seats"
+
+      - name: business_class_seats
+        description: "Number of business class seats"
+
+      - name: economy_class_seats
+        description: "Number of economy class seats"
+
+      - name: max_takeoff_weight_kg
+        description: "Maximum takeoff weight in kilograms"
+
+      - name: range_km
+        description: "Maximum operating range in kilometers"
+
+      - name: operator_airline
+        description: "Airline currently operating the aircraft"
+
+      - name: status
+        description: "Current operational status of the aircraft (e.g. Active, Retired, Stored)"          
   - name: fact_weather_observation
     description: "Fact table with one row per airport per day, capturing weather metrics."
     columns:
@@ -154,3 +203,43 @@ models:
               arguments:
                 to: ref('dim_airport')
                 field: airport_code
+      
+      - name: operational_status
+        description: "Aircraft's operational status on this day (Active, Maintenance, Retired)"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Active', 'Maintenance', 'Retired']
+
+      - name: is_scheduled_day
+        description: "Whether the aircraft had any scheduled flights on this day"
+        tests:
+          - not_null
+
+      - name: scheduled_flight_count
+        description: "Number of flights scheduled for the aircraft on this day"
+
+      - name: completed_flight_count
+        description: "Number of scheduled flights actually completed"
+
+      - name: cancelled_flight_count
+        description: "Number of scheduled flights cancelled"
+
+      - name: block_hours
+        description: "Total block hours (flight time plus ground operations) for the day"
+
+      - name: flight_hours
+        description: "Total airborne flight hours for the day"
+
+      - name: total_distance_km
+        description: "Total distance flown in kilometers"
+
+      - name: total_passengers_carried
+        description: "Total number of passengers carried across completed flights"
+
+      - name: available_seat_kilometers
+        description: "Available Seat Kilometers (ASK) - total seats offered multiplied by distance flown"
+
+      - name: revenue_passenger_kilometers
+        description: "Revenue Passenger Kilometers (RPK) - total passengers carried multiplied by distance flown"

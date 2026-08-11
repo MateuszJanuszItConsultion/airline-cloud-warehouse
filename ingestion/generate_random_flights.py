@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 
 def generate_flights(run_date: datetime, n_rows: int = 500, output_dir: str = "data"):
-    np.random.seed(int(run_date.strftime("%Y%m%d")))
+    np.random.seed(int(run_date.strftime("%Y%m%d")) + 1)
 
     start_date = run_date - timedelta(days=6)
     dates = [start_date + timedelta(days=int(i)) for i in np.random.randint(0, 7, size=n_rows)]
