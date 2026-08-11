@@ -61,6 +61,7 @@ models:
             combination_of_columns:
               - flight_date
               - aircraft_key
+              - airport_code
     columns:
       - name: flight_date
         description: "The date of the aircraft utilization record"
