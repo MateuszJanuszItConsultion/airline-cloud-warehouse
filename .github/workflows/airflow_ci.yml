@@ -1,0 +1,48 @@
+name: Airflow DAG Validation
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      -'airflow/**'
+
+jobs:
+  validate-dags:
+    runs-on: ubuntu-latest
+    env:
+      AIRFLOW_VAR_DATABRICKS_WAREHOUSE_ID: "dummy_warehouse_id"
+      AIRFLOW_VAR_DATABRICKS_CATALOG: "dummy_catalog"
+      AIRFLOW_VAR_DBT_GIT_URL: "https://github.com/dummy/repo"
+      AIRFLOW_VAR_DBT_GIT_BRANCH: "master"
+      PYTHONPATH: ${{ github.workspace }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      - name: Install dependencies
+        run: |
+          pip install apache-airflow==3.3.0 apache-airflow-providers-databricks databricks-sdk pandas numpy pyarrow
+      
+      - name: Validate DAG imports
+        run: |
+          python -c "
+          from airflow.models import DagBag
+
+          db = DagBag(dag_folder='airflow/dags', include_examples=False)
+
+          if db.import_errors:
+              print('DAG import errors found:')
+              for filename, error in db.import_errors.items():
+                  print(f'--- {filename} ---')
+                  print(error)
+              raise SystemExit(1)
+
+          print(f'Successfully imported {len(db.dags)} DAG(s): {list(db.dags.keys())}')
+          "
