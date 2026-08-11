@@ -1,17 +1,21 @@
 import argparse
+import sys
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from ingestion.reference_data import load_airport_codes
 
 
 def generate_flights(run_date: datetime, n_rows: int = 500, output_dir: str = "data"):
     np.random.seed(int(run_date.strftime("%Y%m%d")) + 1)
-
+    
     start_date = run_date - timedelta(days=6)
     dates = [start_date + timedelta(days=int(i)) for i in np.random.randint(0, 7, size=n_rows)]
 
     carriers = ['AA', 'DL', 'UA', 'WN', 'B6']
-    airports = ['JFK', 'LAX', 'ORD', 'DFW', 'DEN', 'SFO', 'ATL', 'MIA']
+    airports = load_airport_codes()
 
     origins = np.random.choice(airports, size=n_rows)
     destinations = [np.random.choice([a for a in airports if a != o]) for o in origins]

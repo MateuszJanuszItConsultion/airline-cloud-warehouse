@@ -1,10 +1,13 @@
 import argparse
+import sys
 import pandas as pd
 import numpy as np
 from datetime import datetime
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from ingestion.reference_data import load_airport_codes
 
-AIRPORTS = ['JFK', 'LAX', 'ORD', 'DFW', 'DEN', 'SFO', 'ATL', 'MIA']
-
+AIRPORTS = load_airport_codes()
 
 def generate_weather(run_date: datetime, output_dir: str = "data"):
     np.random.seed(int(run_date.strftime("%Y%m%d")) + 1)

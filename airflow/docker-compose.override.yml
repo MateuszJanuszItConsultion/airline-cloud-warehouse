@@ -4,18 +4,22 @@ services:
     volumes:
       - ../ingestion:/usr/local/airflow/ingestion
       - ../data:/usr/local/airflow/data
+      - ../dbt_project:/usr/local/airflow/dbt_project
 
   dag-processor:
     volumes:
       - ../ingestion:/usr/local/airflow/ingestion
       - ../data:/usr/local/airflow/data
+      - ../dbt_project:/usr/local/airflow/dbt_project
 
   triggerer:
     volumes:
       - ../ingestion:/usr/local/airflow/ingestion
       - ../data:/usr/local/airflow/data
+      - ../dbt_project:/usr/local/airflow/dbt_project
 
   api-server:
     volumes:
       - ../ingestion:/usr/local/airflow/ingestion
       - ../data:/usr/local/airflow/data
+      - ../dbt_project:/usr/local/airflow/dbt_project

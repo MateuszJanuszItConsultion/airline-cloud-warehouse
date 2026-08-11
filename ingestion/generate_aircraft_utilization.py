@@ -1,14 +1,20 @@
 import argparse
 import os
 from datetime import datetime
+import sys
 import numpy as np
 import pandas as pd
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from ingestion.reference_data import load_airport_codes
 
 AIRCRAFT_KEYS = [
     'N104NN', 'N802DN', 'SP-LRA', 'SP-LVD', 'G-XWBA', 'D-AIMA', 'F-HTYA',
     'OE-LWA', 'N789UA', 'A6-EEO', 'HB-JJA', 'EI-DCL', 'WZ-A321', 'B-18001',
     'VH-VZW', 'C-GHPQ', 'JA801A', 'LN-RRG', 'PH-BVA', 'SP-LMA'
 ]
+
+AIRPORTS = load_airport_codes()
 
 # Default seat capacity for aircraft, used to calculate available seat kilometers (ASK)
 DEFAULT_SEAT_CAPACITY = 180
@@ -19,7 +25,7 @@ def generate_aircraft_utilization(run_date: datetime, output_dir: str = "data"):
 
     rows = []
     for aircraft in AIRCRAFT_KEYS:
-        airport = np.random.choice(['JFK', 'LAX', 'ORD', 'DFW', 'DEN', 'SFO', 'ATL', 'MIA'])
+        airport = np.random.choice(AIRPORTS)
         
         # Statistical status of the aircraft for the given day
         operational_status = np.random.choice(['Active', 'Maintenance', 'Retired'], p=[0.8, 0.15, 0.05])
