@@ -16,6 +16,7 @@ jobs:
       AIRFLOW_VAR_DBT_GIT_URL: "https://github.com/dummy/repo"
       AIRFLOW_VAR_DBT_GIT_BRANCH: "master"
       PYTHONPATH: ${{ github.workspace }}
+      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
 
     steps:
       - name: Checkout repo
@@ -35,7 +36,7 @@ jobs:
           python -c "
           from airflow.models import DagBag
 
-          db = DagBag(dag_folder='airflow/dags', include_examples=False)
+          db = DagBag(dag_folder='airflow/dags')
 
           if db.import_errors:
               print('DAG import errors found:')
