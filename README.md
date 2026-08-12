@@ -88,25 +88,27 @@ erDiagram
 | Language | Python (ingestion), SQL (transformation) |
 
 ## Repository structure
+```
 airline-cloud-warehouse/
-├── airflow/ # Astro CLI project
-│ └── dags/
-│ └── extraction_and_dbt_dag.py
-├── ingestion/ # Data generation scripts
-│ ├── generate_random_flights.py
-│ ├── generate_weather_data.py
-│ ├── generate_aircraft_utilization.py
-│ └── reference_data.py # shared airport reference (single source of truth)
+├── airflow/                    # Astro CLI project
+│   └── dags/
+│       └── extraction_and_dbt_dag.py
+├── ingestion/                  # Data generation scripts
+│   ├── generate_random_flights.py
+│   ├── generate_weather_data.py
+│   ├── generate_aircraft_utilization.py
+│   └── reference_data.py       # shared airport reference (single source of truth)
 ├── dbt_project/airline_warehouse/
-│ ├── models/
-│ │ ├── staging/ # Bronze -> Silver: clean, dedupe, enrich
-│ │ └── marts/
-│ │ ├── *.sql # dimensions and facts (Gold)
-│ │ └── analytics/ # cross-fact aggregates
-│ └── seeds/ # static reference data (airports, carriers, aircraft)
+│   ├── models/
+│   │   ├── staging/             # Bronze -> Silver: clean, dedupe, enrich
+│   │   └── marts/
+│   │       ├── *.sql            # dimensions and facts (Gold)
+│   │       └── analytics/       # cross-fact aggregates
+│   └── seeds/                   # static reference data (airports, carriers, aircraft)
 └── .github/workflows/
-├── dbt_ci.yml # validates dbt build on PR
-└── airflow_ci.yml # validates DAG imports on PR
+    ├── dbt_ci.yml                # validates dbt build on PR
+    └── airflow_ci.yml            # validates DAG imports on PR
+```
 
 ## Key design decisions
 
@@ -135,3 +137,7 @@ Requires a `.env` file (not committed) with `DATABRICKS_HOST`, `DATABRICKS_HTTP_
 - Every PR touching `dbt_project/**` runs `dbt build` against Databricks via GitHub Actions.
 - Every PR touching `airflow/**` validates that all DAGs import without errors, using Airflow's `DagBag`.
 - `master` is protected: changes only land via reviewed, passing PRs.
+
+## License
+
+MIT — see [LICENSE](LICENSE) for details.
