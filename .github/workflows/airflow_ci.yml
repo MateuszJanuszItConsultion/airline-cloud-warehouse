@@ -7,6 +7,9 @@ on:
     paths:
       - 'airflow/**'
 
+permissions:
+  contents: read
+
 jobs:
   validate-dags:
     runs-on: ubuntu-latest
@@ -19,7 +22,7 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
         uses: actions/setup-python@v5
