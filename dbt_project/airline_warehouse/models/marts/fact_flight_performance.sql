@@ -2,7 +2,8 @@
 {{ config(
     materialized='incremental',
     unique_key=['flight_date', 'carrier_code', 'flight_number', 'origin_airport', 'dest_airport'],
-    incremental_strategy='merge'
+    incremental_strategy='merge',
+    on_schema_change='append_new_columns'
 ) }}
 
 select
@@ -14,7 +15,8 @@ select
     dest_airport,
     dep_delay_minutes,
     arr_delay_minutes,
-    is_cancelled
+    is_cancelled,
+    delay_category
 from {{ ref('stg_flights') }}
 
 {% if is_incremental() %}

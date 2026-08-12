@@ -20,7 +20,8 @@ select
     total_distance_km,
     total_passengers_carried,
     available_seat_kilometers,
-    revenue_passenger_kilometers
+    revenue_passenger_kilometers,
+    utilization_level
 from {{ ref('stg_aircraft_utilization') }}
 
 {% if is_incremental() %}

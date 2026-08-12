@@ -1,7 +1,8 @@
 {{ config(
     materialized='incremental',
     unique_key=['date_key', 'airport_code'],
-    incremental_strategy='merge'
+    incremental_strategy='merge',
+    on_schema_change='append_new_columns'
 ) }}
 
 select
@@ -12,7 +13,8 @@ select
     precipitation_mm,
     avg_wind_speed_kmh,
     visibility_km,
-    has_severe_weather
+    has_severe_weather,
+    season
 from {{ ref('stg_weather') }}
 
 {% if is_incremental() %}

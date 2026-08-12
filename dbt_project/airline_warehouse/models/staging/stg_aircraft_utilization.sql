@@ -1,4 +1,4 @@
-{{ config(materialized='view') }}
+{{ config(materialized='table') }}
 
 with source as (
     select * from {{ source('bronze', 'aircraft_utilization_raw') }}
@@ -7,21 +7,60 @@ with source as (
 renamed as (
     select
         cast(fl_date as date)                               as flight_date,
-        aircraft_key                                        as aircraft_key,
-        airport_code                                        as airport_code,
-        operational_status                                  as operational_status,
+        aircraft_key,
+        airport_code,
+        operational_status,
         is_scheduled_day = 1                                as is_scheduled_day,
-        scheduled_flight_count                              as scheduled_flight_count,
-        completed_flight_count                              as completed_flight_count,
-        cancelled_flight_count                              as cancelled_flight_count,
-        block_hours                                         as block_hours,
-        flight_hours                                        as flight_hours,
-        total_distance_km                                   as total_distance_km,
-        total_passengers_carried                            as total_passengers_carried,
-        available_seat_kilometers                           as available_seat_kilometers,
-        revenue_passenger_kilometers                        as revenue_passenger_kilometers,
+        scheduled_flight_count,
+        completed_flight_count,
+        cancelled_flight_count,
+        block_hours,
+        flight_hours,
+        total_distance_km,
+        total_passengers_carried,
+        available_seat_kilometers,
+        revenue_passenger_kilometers,
         _ingested_at,
         _source_file
     from source
+),
+
+deduplicated as (
+    select
+        *,
+        row_number() over (
+            partition by flight_date, aircraft_key, airport_code
+            order by _ingested_at desc
+        ) as _row_num
+    from renamed
+),
+
+enriched as (
+    select
+        flight_date,
+        aircraft_key,
+        airport_code,
+        operational_status,
+        is_scheduled_day,
+        scheduled_flight_count,
+        completed_flight_count,
+        cancelled_flight_count,
+        block_hours,
+        flight_hours,
+        total_distance_km,
+        total_passengers_carried,
+        available_seat_kilometers,
+        revenue_passenger_kilometers,
+        case
+            when operational_status != 'Active' then 'grounded'
+            when not is_scheduled_day then 'idle'
+            when completed_flight_count >= 3 then 'heavy_use'
+            else 'light_use'
+        end as utilization_level,
+        _ingested_at,
+        _source_file
+    from deduplicated
+    where _row_num = 1
 )
-select * from renamed
+
+select * from enriched
