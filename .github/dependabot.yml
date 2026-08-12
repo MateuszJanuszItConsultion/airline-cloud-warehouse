@@ -6,11 +6,6 @@ updates:
       interval: "weekly"
 
   - package-ecosystem: "pip"
-    directory: "/dbt_project/airline_warehouse"
-    schedule:
-      interval: "weekly"
-
-  - package-ecosystem: "pip"
     directory: "/airflow"
     schedule:
       interval: "weekly"
