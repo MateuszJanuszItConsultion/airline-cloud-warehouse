@@ -1,0 +1,15 @@
+version: 2
+
+models:
+  - name: mart_daily_airport_conditions
+    description: "Analytical mart combining daily flight performance, weather conditions, and aircraft utilization per airport. Grain: one row per (date, airport)."
+    columns:
+      - name: date_key
+        description: "Date in YYYYMMDD format"
+        tests:
+          - not_null
+
+      - name: airport_code
+        description: "IATA airport code"
+        tests:
+          - not_null
