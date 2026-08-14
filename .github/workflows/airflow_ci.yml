@@ -2,10 +2,7 @@ name: Airflow DAG Validation
 
 on:
   pull_request:
-    branches:
-      - master
-    paths:
-      - 'airflow/**'
+    branches: [master]
 
 permissions:
   contents: read
@@ -13,6 +10,9 @@ permissions:
 jobs:
   validate-dags:
     runs-on: ubuntu-latest
+    if: |
+      contains(github.event.pull_request.changed_files, 'airflow/') ||
+      github.event_name == 'workflow_dispatch'
     env:
       AIRFLOW_VAR_DATABRICKS_WAREHOUSE_ID: "dummy_warehouse_id"
       AIRFLOW_VAR_DATABRICKS_CATALOG: "dummy_catalog"
