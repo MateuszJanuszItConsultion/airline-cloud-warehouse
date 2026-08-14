@@ -30,7 +30,7 @@ models:
           - accepted_values:
               arguments:
                 values: [true, false]
-      
+
       - name: date_key
         description: "Foreign key to dim_date"
         tests:
@@ -39,7 +39,7 @@ models:
               arguments:
                 to: ref('dim_date')
                 field: date_key
-      
+
       - name: origin_airport
         description: "Origin airport code, foreign key to dim_airport"
         tests:
@@ -56,7 +56,15 @@ models:
           - relationships:
               arguments:
                 to: ref('dim_airport')
-                field: airport_code      
+                field: airport_code
+
+      - name: delay_category
+        description: "Categorization of the flight delay based on departure delay minutes"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['on_time', 'minor_delay', 'major_delay', 'cancelled', 'unknown']
 
   - name: dim_date
     description: "Date dimension with calendar attributes, one row per day."
@@ -81,7 +89,7 @@ models:
         tests:
           - unique
           - not_null
-          
+
   - name: dim_carrier
     description: "Airline carrier reference dimension, sourced from a static seed file."
     columns:
@@ -89,7 +97,17 @@ models:
         description: "IATA carrier code"
         tests:
           - unique
-          - not_null 
+          - not_null
+
+  - name: dim_aircraft
+    description: "Airline aircraft reference dimension, sourced from a static seed file."
+    columns:
+      - name: tail_number
+        description: "Tail number of the aircraft"
+        tests:
+          - unique
+          - not_null
+
       - name: serial_number
         description: "Manufacturer serial number of the aircraft"
 
@@ -139,7 +157,8 @@ models:
         description: "Airline currently operating the aircraft"
 
       - name: status
-        description: "Current operational status of the aircraft (e.g. Active, Retired, Stored)"          
+        description: "Current operational status of the aircraft (e.g. Active, Retired, Stored)"
+
   - name: fact_weather_observation
     description: "Fact table with one row per airport per day, capturing weather metrics."
     columns:
@@ -166,16 +185,16 @@ models:
         tests:
           - not_null
 
-  - name: dim_aircraft
-    description: "Airline aircraft reference dimension, sourced from a static seed file."
-    columns:
-      - name: tail_number
-        description: "Tail number of the aircraft"
+      - name: season
+        description: "Season during which the observation was recorded (Winter, Spring, Summer, Fall)"
         tests:
-          - unique
           - not_null
+          - accepted_values:
+              arguments:
+                values: ['Winter', 'Spring', 'Summer', 'Fall']
+
   - name: fact_aircraft_utilization
-    description: "Fact table with one row per aircraft per day, capturing utilization metrics." 
+    description: "Fact table with one row per aircraft per day, capturing utilization metrics."
     columns:
       - name: date_key
         description: "Foreign key to dim_date"
@@ -203,7 +222,7 @@ models:
               arguments:
                 to: ref('dim_airport')
                 field: airport_code
-      
+
       - name: operational_status
         description: "Aircraft's operational status on this day (Active, Maintenance, Retired)"
         tests:
@@ -243,3 +262,26 @@ models:
 
       - name: revenue_passenger_kilometers
         description: "Revenue Passenger Kilometers (RPK) - total passengers carried multiplied by distance flown"
+
+      - name: utilization_level
+        description: "Categorization of aircraft utilization based on operational status, schedule, and completed flight count"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['grounded', 'idle', 'heavy_use', 'light_use']
+
+
+  - name: dim_aircraft_scd2
+    description: "SCD Type 2 dimension tracking historical changes to aircraft status, operator, and seat capacity over time. One row per distinct version of each aircraft."
+    columns:
+      - name: aircraft_scd_key
+        description: "Surrogate key uniquely identifying a specific version of an aircraft (hash of tail_number + valid_from)"
+        tests:
+          - unique
+          - not_null
+
+      - name: tail_number
+        description: "Aircraft tail number — not unique in this table, use aircraft_scd_key for joins requiring a single row"
+        tests:
+          - not_null
