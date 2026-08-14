@@ -105,9 +105,10 @@ airline-cloud-warehouse/
 │   │       ├── *.sql            # dimensions and facts (Gold)
 │   │       └── analytics/       # cross-fact aggregates
 │   └── seeds/                   # static reference data (airports, carriers, aircraft)
-└── .github/workflows/
-    ├── dbt_ci.yml                # validates dbt build on PR
-    └── airflow_ci.yml            # validates DAG imports on PR
+├── .github/workflows/
+│   ├── dbt_ci.yml                # validates dbt build on PR
+│   └── airflow_ci.yml            # validates DAG imports on PR
+├── sql/bronze_ddl/               # Bronze table DDL (manually applied, documentation + DR)
 ```
 
 ## Key design decisions
