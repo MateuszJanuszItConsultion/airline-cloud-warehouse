@@ -1,12 +1,11 @@
-
 {{ config(
     materialized='incremental',
     unique_key=['flight_date', 'aircraft_key', 'airport_code'],
     incremental_strategy='merge'
 ) }}
 
-select
-    cast(date_format(flight_date, 'yyyyMMdd') as int) as date_key,
+SELECT
+    cast(date_format(flight_date, 'yyyyMMdd') AS int) AS date_key,
     flight_date,
     aircraft_key,
     airport_code,
@@ -22,8 +21,8 @@ select
     available_seat_kilometers,
     revenue_passenger_kilometers,
     utilization_level
-from {{ ref('stg_aircraft_utilization') }}
+FROM {{ ref('stg_aircraft_utilization') }}
 
 {% if is_incremental() %}
-where flight_date > (select max(flight_date) from {{ this }})
+    WHERE flight_date > (SELECT max(flight_date) FROM {{ this }})
 {% endif %}

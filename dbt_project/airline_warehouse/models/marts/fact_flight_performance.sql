@@ -1,4 +1,3 @@
-
 {{ config(
     materialized='incremental',
     unique_key=['flight_date', 'carrier_code', 'flight_number', 'origin_airport', 'dest_airport'],
@@ -6,8 +5,8 @@
     on_schema_change='append_new_columns'
 ) }}
 
-select
-    cast(date_format(flight_date, 'yyyyMMdd') as int) as date_key,
+SELECT
+    cast(date_format(flight_date, 'yyyyMMdd') AS int) AS date_key,
     flight_date,
     carrier_code,
     flight_number,
@@ -17,8 +16,8 @@ select
     arr_delay_minutes,
     is_cancelled,
     delay_category
-from {{ ref('stg_flights') }}
+FROM {{ ref('stg_flights') }}
 
 {% if is_incremental() %}
-where flight_date > (select max(flight_date) from {{ this }})
+    WHERE flight_date > (SELECT max(flight_date) FROM {{ this }})
 {% endif %}

@@ -1,35 +1,35 @@
 {{ config(materialized='table') }}
 
-with source as (
-    select * from {{ source('bronze', 'weather_raw') }}
+WITH source AS (
+    SELECT * FROM {{ source('bronze', 'weather_raw') }}
 ),
 
-renamed as (
-    select
-        cast(obs_date as date)              as observation_date,
+renamed AS (
+    SELECT
+        cast(obs_date AS date)              AS observation_date,
         airport_code,
         avg_temp_c,
         precipitation_mm,
         avg_wind_speed_kmh,
         visibility_km,
-        has_severe_weather = 1              as has_severe_weather,
+        has_severe_weather = 1              AS has_severe_weather,
         _ingested_at,
         _source_file
-    from source
+    FROM source
 ),
 
-deduplicated as (
-    select
+deduplicated AS (
+    SELECT
         *,
-        row_number() over (
-            partition by observation_date, airport_code
-            order by _ingested_at desc
-        ) as _row_num
-    from renamed
+        row_number() OVER (
+            PARTITION BY observation_date, airport_code
+            ORDER BY _ingested_at DESC
+        ) AS _row_num
+    FROM renamed
 ),
 
-enriched as (
-    select
+enriched AS (
+    SELECT
         observation_date,
         airport_code,
         avg_temp_c,
@@ -37,16 +37,16 @@ enriched as (
         avg_wind_speed_kmh,
         visibility_km,
         has_severe_weather,
-        case
-            when month(observation_date) in (12, 1, 2) then 'Winter'
-            when month(observation_date) in (3, 4, 5) then 'Spring'
-            when month(observation_date) in (6, 7, 8) then 'Summer'
-            else 'Fall'
-        end as season,
+        CASE
+            WHEN month(observation_date) IN (12, 1, 2) THEN 'Winter'
+            WHEN month(observation_date) IN (3, 4, 5) THEN 'Spring'
+            WHEN month(observation_date) IN (6, 7, 8) THEN 'Summer'
+            ELSE 'Fall'
+        END AS season,
         _ingested_at,
         _source_file
-    from deduplicated
-    where _row_num = 1
+    FROM deduplicated
+    WHERE _row_num = 1
 )
 
-select * from enriched
+SELECT * FROM enriched

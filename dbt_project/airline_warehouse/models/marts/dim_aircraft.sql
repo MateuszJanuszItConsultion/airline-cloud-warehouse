@@ -1,6 +1,6 @@
 {{ config(materialized='table') }}
 
-select
+SELECT
     tail_number,
     serial_number,
     manufacturer,
@@ -19,4 +19,4 @@ select
     range_km,
     operator_airline, 
     status
-from {{ ref('aircraft') }}
+FROM {{ ref('aircraft') }}

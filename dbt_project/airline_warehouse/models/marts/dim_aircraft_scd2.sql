@@ -1,19 +1,19 @@
 {{ config(materialized='table') }}
 
-with source as (
-    select * from {{ ref('aircraft_snapshot') }}
+WITH source AS (
+    SELECT * FROM {{ ref('aircraft_snapshot') }}
 ),
 
-backdated as (
-    select
+backdated AS (
+    SELECT
         *,
-        min(valid_from) over (partition by tail_number) as first_valid_from
-    from source
+        min(valid_from) OVER (PARTITION BY tail_number) AS first_valid_from
+    FROM source
 ),
 
-final as (
-    select
-        {{ dbt_utils.generate_surrogate_key(['tail_number', 'valid_from']) }} as aircraft_scd_key,
+final AS (
+    SELECT
+        {{ dbt_utils.generate_surrogate_key(['tail_number', 'valid_from']) }} AS aircraft_scd_key,
         tail_number,
         serial_number,
         manufacturer,
@@ -32,13 +32,13 @@ final as (
         range_km,
         operator_airline,
         status,
-        case
-            when valid_from = first_valid_from then cast('2026-01-01' as timestamp)
-            else valid_from
-        end as valid_from,
+        CASE
+            WHEN valid_from = first_valid_from THEN cast('2026-01-01' AS timestamp)
+            ELSE valid_from
+        END AS valid_from,
         valid_to,
-        valid_to is null as is_current
-    from backdated
+        valid_to IS null AS is_current
+    FROM backdated
 )
 
-select * from final
+SELECT * FROM final

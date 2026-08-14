@@ -1,10 +1,10 @@
 {{ config(materialized='table') }}
 
-select
+SELECT
     airport_code,
     airport_name,
     city,
     state,
     country,
     timezone
-from {{ ref('airports') }}
+FROM {{ ref('airports') }}

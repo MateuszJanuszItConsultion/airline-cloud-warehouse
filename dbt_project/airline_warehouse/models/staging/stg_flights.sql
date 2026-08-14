@@ -1,36 +1,36 @@
 {{ config(materialized='table') }}
 
-with source as (
-    select * from {{ source('bronze', 'flights_raw') }}
+WITH source AS (
+    SELECT * FROM {{ source('bronze', 'flights_raw') }}
 ),
 
-renamed as (
-    select
-        cast(fl_date as date)              as flight_date,
-        op_carrier                          as carrier_code,
-        op_carrier_fl_num                   as flight_number,
-        origin                               as origin_airport,
-        dest                                 as dest_airport,
-        try_cast(dep_delay as double)       as dep_delay_minutes,
-        try_cast(arr_delay as double)       as arr_delay_minutes,
-        cancelled = '1'                     as is_cancelled,
+renamed AS (
+    SELECT
+        cast(fl_date AS date)              AS flight_date,
+        op_carrier                          AS carrier_code,
+        op_carrier_fl_num                   AS flight_number,
+        origin                               AS origin_airport,
+        dest                                 AS dest_airport,
+        try_cast(dep_delay AS double)       AS dep_delay_minutes,
+        try_cast(arr_delay AS double)       AS arr_delay_minutes,
+        cancelled = '1'                     AS is_cancelled,
         _ingested_at,
         _source_file
-    from source
+    FROM source
 ),
 
-deduplicated as (
-    select
+deduplicated AS (
+    SELECT
         *,
-        row_number() over (
-            partition by flight_date, carrier_code, flight_number, origin_airport, dest_airport
-            order by _ingested_at desc
-        ) as _row_num
-    from renamed
+        row_number() OVER (
+            PARTITION BY flight_date, carrier_code, flight_number, origin_airport, dest_airport
+            ORDER BY _ingested_at DESC
+        ) AS _row_num
+    FROM renamed
 ),
 
-enriched as (
-    select
+enriched AS (
+    SELECT
         flight_date,
         carrier_code,
         flight_number,
@@ -39,17 +39,17 @@ enriched as (
         dep_delay_minutes,
         arr_delay_minutes,
         is_cancelled,
-        case
-            when is_cancelled then 'cancelled'
-            when dep_delay_minutes is null then 'unknown'
-            when dep_delay_minutes <= 15 then 'on_time'
-            when dep_delay_minutes <= 60 then 'minor_delay'
-            else 'major_delay'
-        end as delay_category,
+        CASE
+            WHEN is_cancelled THEN 'cancelled'
+            WHEN dep_delay_minutes IS null THEN 'unknown'
+            WHEN dep_delay_minutes <= 15 THEN 'on_time'
+            WHEN dep_delay_minutes <= 60 THEN 'minor_delay'
+            ELSE 'major_delay'
+        END AS delay_category,
         _ingested_at,
         _source_file
-    from deduplicated
-    where _row_num = 1
+    FROM deduplicated
+    WHERE _row_num = 1
 )
 
-select * from enriched
+SELECT * FROM enriched

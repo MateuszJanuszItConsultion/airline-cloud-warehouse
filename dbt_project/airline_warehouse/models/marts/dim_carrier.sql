@@ -1,7 +1,7 @@
 {{ config(materialized='table') }}
 
-select
+SELECT
     carrier_code,
     carrier_name,
     carrier_type
-from {{ ref('carriers') }}
+FROM {{ ref('carriers') }}

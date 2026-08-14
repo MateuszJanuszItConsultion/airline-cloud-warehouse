@@ -33,6 +33,9 @@ jobs:
       - name: Install dbt-databricks
         run: pip install dbt-databricks==1.12.3
 
+      - name: Install sqlfluff
+        run: pip install sqlfluff sqlfluff-templater-dbt
+
       - name: Set up dbt profiles.yml
         run: |
           mkdir -p ~/.dbt
@@ -52,6 +55,9 @@ jobs:
 
       - name: dbt deps
         run: dbt deps
+
+      - name: Lint SQL
+        run: sqlfluff lint models/
 
       - name: dbt debug
         run: dbt debug
