@@ -66,6 +66,11 @@ models:
               arguments:
                 values: ['on_time', 'minor_delay', 'major_delay', 'cancelled', 'unknown']
 
+      - name: _ingested_at
+        description: "Technical metadata column tracking when the underlying Bronze record was loaded. Used as the incremental watermark for this model, since flight_date alone is not monotonic across runs (source data may include late-arriving flights from earlier dates within the sliding generation window)."
+        tests:
+          - not_null
+
   - name: dim_date
     description: "Date dimension with calendar attributes, one row per day."
     columns:

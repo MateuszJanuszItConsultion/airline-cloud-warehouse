@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS airline_cloud_warehouse.bronze.aircraft_utilization_raw (
   fl_date STRING COMMENT 'Flight operation date (YYYY-MM-DD)',
-  aircraft_key STRING 'Aircraft registration/tail number (e.g., SP-LRA)',
-  airport_code STRING 'IATA code of the base/starting airport for the day',
-  operational_status STRING 'Aircraft operational status (Active, Maintenance, Retired)',
+  aircraft_key STRING COMMENT 'Aircraft registration/tail number (e.g., SP-LRA)',
+  airport_code STRING COMMENT 'IATA code of the base/starting airport for the day',
+  operational_status STRING COMMENT 'Aircraft operational status (Active, Maintenance, Retired)',
   is_scheduled_day INT COMMENT 'Flag indicating if the aircraft was scheduled (1 = Yes, 0 = No)',
   scheduled_flight_count INT COMMENT 'Total number of scheduled flights for the day',
   completed_flight_count INT COMMENT 'Total number of completed flights for the day',
