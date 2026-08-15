@@ -7,6 +7,7 @@ import pandas as pd
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from ingestion.reference_data import load_airport_codes
+from ingestion.validation import validate_aircraft_utilization
 
 AIRCRAFT_KEYS = [
     'N104NN', 'N802DN', 'SP-LRA', 'SP-LVD', 'G-XWBA', 'D-AIMA', 'F-HTYA',
@@ -115,7 +116,7 @@ def generate_aircraft_utilization(run_date: datetime, output_dir: str = "data"):
 
     os.makedirs(output_dir, exist_ok=True)
     output_path = os.path.join(output_dir, f"aircraft_utilization_{run_date:%Y%m%d}.parquet")
-    
+    validate_aircraft_utilization(df)
     df.to_parquet(output_path, index=False)
     print(f"Generated {len(df)} rows for date {run_date.date()} -> {output_path}")
     return output_path
