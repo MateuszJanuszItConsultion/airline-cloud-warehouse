@@ -3,8 +3,6 @@ name: dbt CI
 on:
   pull_request:
     branches: [master]
-    paths:
-      - 'dbt_project/**'
 
 permissions:
   contents: read
@@ -25,18 +23,30 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v7
 
+      - name: Check for dbt changes
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            dbt_changes:
+              - 'dbt_project/**'
+
       - name: Set up Python
+        if: steps.filter.outputs.dbt_changes == 'true'
         uses: actions/setup-python@v7
         with:
           python-version: '3.13'
 
       - name: Install dbt-databricks
+        if: steps.filter.outputs.dbt_changes == 'true'
         run: pip install dbt-databricks==1.12.3
 
       - name: Install sqlfluff
+        if: steps.filter.outputs.dbt_changes == 'true'
         run: pip install sqlfluff sqlfluff-templater-dbt
 
       - name: Set up dbt profiles.yml
+        if: steps.filter.outputs.dbt_changes == 'true'
         run: |
           mkdir -p ~/.dbt
           cat > ~/.dbt/profiles.yml << 'EOF'
@@ -54,13 +64,17 @@ jobs:
           EOF
 
       - name: dbt deps
+        if: steps.filter.outputs.dbt_changes == 'true'      
         run: dbt deps
 
       - name: Lint SQL
+        if: steps.filter.outputs.dbt_changes == 'true'
         run: sqlfluff lint models/
 
       - name: dbt debug
+        if: steps.filter.outputs.dbt_changes == 'true'
         run: dbt debug
 
       - name: dbt build
+        if: steps.filter.outputs.dbt_changes == 'true'
         run: dbt build
