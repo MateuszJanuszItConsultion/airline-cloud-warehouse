@@ -15,7 +15,8 @@ SELECT
     dep_delay_minutes,
     arr_delay_minutes,
     is_cancelled,
-    delay_category
+    delay_category,
+    _ingested_at
 FROM {{ ref('stg_flights') }}
 
 {% if is_incremental() %}
