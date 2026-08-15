@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from ingestion.reference_data import load_airport_codes
+from ingestion.validation import validate_flights
 
 
 def generate_flights(run_date: datetime, n_rows: int = 500, output_dir: str = "data"):
@@ -41,6 +42,7 @@ def generate_flights(run_date: datetime, n_rows: int = 500, output_dir: str = "d
     })
 
     output_path = f"{output_dir}/flights_{run_date:%Y%m%d}.parquet"
+    validate_flights(df)
     df.to_parquet(output_path, index=False)
     print(f"Generated {n_rows} rows for week ending {run_date.date()} -> {output_path}")
     return output_path

@@ -6,6 +6,7 @@ from datetime import datetime
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from ingestion.reference_data import load_airport_codes
+from ingestion.validation import validate_weather
 
 AIRPORTS = load_airport_codes()
 
@@ -32,6 +33,7 @@ def generate_weather(run_date: datetime, output_dir: str = "data"):
 
     df = pd.DataFrame(rows)
     output_path = f"{output_dir}/weather_{run_date:%Y%m%d}.parquet"
+    validate_weather(df)
     df.to_parquet(output_path, index=False)
     print(f"Generated {len(df)} weather rows for {run_date.date()} -> {output_path}")
     return output_path
