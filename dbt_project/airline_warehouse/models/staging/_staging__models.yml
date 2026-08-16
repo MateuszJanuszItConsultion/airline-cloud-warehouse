@@ -12,6 +12,12 @@ models:
               - flight_number
               - origin_airport
               - dest_airport
+
+      - no_missing_business_keys:
+          arguments:
+            compare_model: "{{ source('bronze', 'flights_raw') }}"
+            target_key_columns: ['flight_date', 'carrier_code', 'flight_number', 'origin_airport', 'dest_airport']
+            source_key_columns: ['fl_date', 'op_carrier', 'op_carrier_fl_num', 'origin', 'dest']
     
     columns:
       - name: flight_date
@@ -42,6 +48,14 @@ models:
             combination_of_columns:
               - observation_date
               - airport_code
+
+      - no_missing_business_keys:
+          arguments:
+            compare_model: "{{ source('bronze', 'weather_raw') }}"
+            target_key_columns: ['observation_date', 'airport_code']
+            source_key_columns: ['obs_date', 'airport_code']
+
+
     columns:
       - name: observation_date
         description: "Date of the weather observation"
@@ -62,6 +76,13 @@ models:
               - flight_date
               - aircraft_key
               - airport_code
+
+      - no_missing_business_keys:
+          arguments:
+            compare_model: "{{ source('bronze', 'aircraft_utilization_raw') }}"
+            target_key_columns: ['flight_date', 'aircraft_key', 'airport_code']
+            source_key_columns: ['fl_date', 'aircraft_key', 'airport_code']
+    
     columns:
       - name: flight_date
         description: "The date of the aircraft utilization record"
