@@ -144,6 +144,10 @@ Requires a `.env` file (not committed) with `DATABRICKS_HOST`, `DATABRICKS_HTTP_
 Full dbt documentation (models, lineage graph, tests) is available at:
 [https://mateuszjanuszitconsultion.github.io/airline-cloud-warehouse/](https://mateuszjanuszitconsultion.github.io/airline-cloud-warehouse/)
 
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for commit message conventions and branch naming.
+
 ## License
 
 MIT — see [LICENSE](LICENSE) for details.
