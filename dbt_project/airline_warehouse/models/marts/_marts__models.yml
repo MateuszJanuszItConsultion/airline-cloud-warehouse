@@ -70,6 +70,12 @@ models:
         description: "Technical metadata column tracking when the underlying Bronze record was loaded. Used as the incremental watermark for this model, since flight_date alone is not monotonic across runs (source data may include late-arriving flights from earlier dates within the sliding generation window)."
         tests:
           - not_null
+    tests:
+      - no_missing_business_keys:
+          arguments:
+            compare_model: "{{ ref('stg_flights') }}"
+            target_key_columns: ['flight_date', 'carrier_code', 'flight_number', 'origin_airport', 'dest_airport']
+            source_key_columns: ['flight_date', 'carrier_code', 'flight_number', 'origin_airport', 'dest_airport']
 
   - name: dim_date
     description: "Date dimension with calendar attributes, one row per day."
@@ -197,6 +203,13 @@ models:
           - accepted_values:
               arguments:
                 values: ['Winter', 'Spring', 'Summer', 'Fall']
+    tests:
+      - no_missing_business_keys:
+          arguments:
+            compare_model: "{{ ref('stg_weather') }}"
+            target_key_columns: ['observation_date', 'airport_code']
+            source_key_columns: ['observation_date', 'airport_code']
+
 
   - name: fact_aircraft_utilization
     description: "Fact table with one row per aircraft per day, capturing utilization metrics."
@@ -275,6 +288,12 @@ models:
           - accepted_values:
               arguments:
                 values: ['grounded', 'idle', 'heavy_use', 'light_use']
+    tests:
+      - no_missing_business_keys:
+          arguments:
+            compare_model: "{{ ref('stg_aircraft_utilization') }}"
+            target_key_columns: ['flight_date', 'aircraft_key', 'airport_code']
+            source_key_columns: ['flight_date', 'aircraft_key', 'airport_code']
 
 
   - name: dim_aircraft_scd2

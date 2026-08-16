@@ -139,6 +139,11 @@ Requires a `.env` file (not committed) with `DATABRICKS_HOST`, `DATABRICKS_HTTP_
 - Every PR touching `airflow/**` validates that all DAGs import without errors, using Airflow's `DagBag`.
 - `master` is protected: changes only land via reviewed, passing PRs.
 
+## Documentation
+
+Full dbt documentation (models, lineage graph, tests) is available at:
+[https://mateuszjanuszitconsultion.github.io/airline-cloud-warehouse/](https://mateuszjanuszitconsultion.github.io/airline-cloud-warehouse/)
+
 ## License
 
 MIT — see [LICENSE](LICENSE) for details.
