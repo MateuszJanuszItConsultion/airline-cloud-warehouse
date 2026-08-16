@@ -20,5 +20,5 @@ SELECT
 FROM {{ ref('stg_flights') }}
 
 {% if is_incremental() %}
-    WHERE flight_date > (SELECT max(flight_date) FROM {{ this }})
+    WHERE _ingested_at  > (SELECT max(_ingested_at ) FROM {{ this }})
 {% endif %}
