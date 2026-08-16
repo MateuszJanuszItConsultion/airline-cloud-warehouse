@@ -5,7 +5,7 @@ import numpy as np
 from datetime import datetime, timedelta
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from ingestion.reference_data import load_airport_codes
+from ingestion.reference_data import load_airport_codes, load_carriers
 from ingestion.validation import validate_flights
 
 
@@ -15,7 +15,7 @@ def generate_flights(run_date: datetime, n_rows: int = 500, output_dir: str = "d
     start_date = run_date - timedelta(days=6)
     dates = [start_date + timedelta(days=int(i)) for i in np.random.randint(0, 7, size=n_rows)]
 
-    carriers = ['AA', 'DL', 'UA', 'WN', 'B6']
+    carriers = load_carriers()
     airports = load_airport_codes()
 
     origins = np.random.choice(airports, size=n_rows)

@@ -6,15 +6,10 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from ingestion.reference_data import load_airport_codes
+from ingestion.reference_data import load_tail_numbers, load_airport_codes
 from ingestion.validation import validate_aircraft_utilization
 
-AIRCRAFT_KEYS = [
-    'N104NN', 'N802DN', 'SP-LRA', 'SP-LVD', 'G-XWBA', 'D-AIMA', 'F-HTYA',
-    'OE-LWA', 'N789UA', 'A6-EEO', 'HB-JJA', 'EI-DCL', 'WZ-A321', 'B-18001',
-    'VH-VZW', 'C-GHPQ', 'JA801A', 'LN-RRG', 'PH-BVA', 'SP-LMA'
-]
-
+AIRCRAFT_KEYS = load_tail_numbers()
 AIRPORTS = load_airport_codes()
 
 # Default seat capacity for aircraft, used to calculate available seat kilometers (ASK)
