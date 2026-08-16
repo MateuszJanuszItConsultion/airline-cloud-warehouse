@@ -1,8 +1,10 @@
 import great_expectations as gx
 import pandas as pd
 
-AIRPORTS = ['JFK', 'LAX', 'ORD', 'DFW', 'DEN', 'SFO', 'ATL', 'MIA']
-CARRIERS = ['AA', 'DL', 'UA', 'WN', 'B6']
+from ingestion.reference_data import load_airport_codes, load_carriers
+
+AIRPORTS = load_airport_codes()
+CARRIERS = load_carriers()
 OPERATIONAL_STATUS = ['Active', 'Maintenance', 'Retired']
 
 def validate_flights(df: pd.DataFrame) -> None:
