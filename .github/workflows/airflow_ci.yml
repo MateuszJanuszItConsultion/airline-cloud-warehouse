@@ -36,8 +36,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install apache-airflow==3.3.0  
-          pip install -r airflow/requirements.txt
-          
+          pip install -r airflow/requirements.txt       
       
       - name: Run DAG tests
         run: pytest airflow/tests/ -v
