@@ -8,11 +8,12 @@ permissions:
   contents: read
 
 jobs:
+  # NOTE: intentionally no path filter (`if:` / `paths:`) here.
+  # github.event.pull_request.changed_files is a count (int), not a file list —
+  # any `contains(..., 'path')` check against it always evaluates to false,
+  # silently skipping this job forever. This workflow is cheap enough to always run.
   validate-dags:
     runs-on: ubuntu-latest
-    if: |
-      contains(github.event.pull_request.changed_files, 'airflow/') ||
-      github.event_name == 'workflow_dispatch'
     env:
       AIRFLOW_HOME: ${{ github.workspace }}/airflow
       AIRFLOW__CORE__DAGS_FOLDER: ${{ github.workspace }}/airflow/dags
