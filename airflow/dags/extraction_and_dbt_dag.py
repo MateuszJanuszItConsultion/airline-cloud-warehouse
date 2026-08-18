@@ -40,6 +40,8 @@ def upload_to_volume(local_path: str, volume_path: str):
     start_date=datetime(2026, 8, 1),
     schedule="0 6 * * *",
     catchup=False,
+    max_active_runs=1,
+    dagrun_timeout=timedelta(hours=8),
     tags=["extraction", "dbt", "databricks"],
     default_args={
         "retries": 2,
