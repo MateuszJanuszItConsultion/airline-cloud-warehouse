@@ -79,3 +79,15 @@ def test_dag_retries(dag_id, dag, fileloc):
     assert (
         dag.default_args.get("retries", None) >= 2
     ), f"{dag_id} in {fileloc} must have task retries >= 2."
+
+@pytest.mark.parametrize(
+    "dag_id,dag,fileloc", get_dags(), ids=[x[2] for x in get_dags()]
+)
+def test_dag_max_active_runs(dag_id, dag, fileloc):
+    """
+    Test if a DAG limits concurrent runs to prevent race conditions
+    (e.g. concurrent COPY INTO operations conflicting on the same Delta table)
+    """
+    assert (
+        dag.max_active_runs == 1
+    ), f"{dag_id} in {fileloc} must have max_active_runs=1 to prevent concurrent writes to Bronze tables."
