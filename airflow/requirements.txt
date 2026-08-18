@@ -2,3 +2,7 @@
 apache-airflow-providers-databricks
 databricks-sdk
 great_expectations==1.11.3
+pandas
+numpy
+pyarrow
+pytest
