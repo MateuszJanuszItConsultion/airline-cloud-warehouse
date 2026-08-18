@@ -1,12 +1,14 @@
 import argparse
 import os
-from datetime import datetime
 import sys
+from datetime import datetime
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
-from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from ingestion.reference_data import load_tail_numbers, load_airport_codes
+from ingestion.reference_data import load_airport_codes, load_tail_numbers
 from ingestion.validation import validate_aircraft_utilization
 
 AIRCRAFT_KEYS = load_tail_numbers()
@@ -64,7 +66,9 @@ def generate_aircraft_utilization(run_date: datetime, output_dir: str = "data"):
                     total_distance_km = int(max(200, np.random.normal(loc=1200 * completed_flight_count, scale=250)))
                     
                     # Flight Hours scaled to completed flights
-                    flight_hours_minutes = round(float(max(0.5, np.random.normal(loc=2.0 * completed_flight_count, scale=0.4))), 2)
+                    flight_hours_minutes = round(
+                        float(max(0.5, np.random.normal(loc=2.0 * completed_flight_count, scale=0.4))), 2
+                    )
                     
                     # Block Hours = flight time + ~30 min for ground operations per flight
                     block_hours_minutes = round(flight_hours_minutes + (completed_flight_count * 0.5), 2)

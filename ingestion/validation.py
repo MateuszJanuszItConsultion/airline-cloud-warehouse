@@ -71,7 +71,9 @@ def validate_weather(df: pd.DataFrame) -> None:
 def validate_aircraft_utilization(df: pd.DataFrame) -> None:
 
     validation_df = df.copy()
-    validation_df['_expected_scheduled'] = validation_df['COMPLETED_FLIGHT_COUNT'] + validation_df['CANCELLED_FLIGHT_COUNT']
+    validation_df["_expected_scheduled"] = (
+        validation_df["COMPLETED_FLIGHT_COUNT"] + validation_df["CANCELLED_FLIGHT_COUNT"]
+    )
 
     context = gx.get_context(mode="ephemeral")
     data_source = context.data_sources.add_pandas("aircraft_utilization_validation")
@@ -86,9 +88,15 @@ def validate_aircraft_utilization(df: pd.DataFrame) -> None:
         gx.expectations.ExpectColumnValuesToNotBeNull(column="AIRCRAFT_KEY"),
         gx.expectations.ExpectColumnValuesToBeInSet(column="AIRPORT_CODE", value_set=AIRPORTS),
         gx.expectations.ExpectColumnValuesToBeInSet(column="OPERATIONAL_STATUS", value_set=OPERATIONAL_STATUS),
-        gx.expectations.ExpectColumnPairValuesAToBeGreaterThanB(column_A="SCHEDULED_FLIGHT_COUNT", column_B="COMPLETED_FLIGHT_COUNT", or_equal=True),
-        gx.expectations.ExpectColumnPairValuesAToBeGreaterThanB(column_A="SCHEDULED_FLIGHT_COUNT", column_B="CANCELLED_FLIGHT_COUNT", or_equal=True),
-        gx.expectations.ExpectColumnPairValuesToBeEqual(column_A="SCHEDULED_FLIGHT_COUNT", column_B="_expected_scheduled")
+        gx.expectations.ExpectColumnPairValuesAToBeGreaterThanB(
+            column_A="SCHEDULED_FLIGHT_COUNT", column_B="COMPLETED_FLIGHT_COUNT", or_equal=True
+        ),
+        gx.expectations.ExpectColumnPairValuesAToBeGreaterThanB(
+            column_A="SCHEDULED_FLIGHT_COUNT", column_B="CANCELLED_FLIGHT_COUNT", or_equal=True
+        ),
+        gx.expectations.ExpectColumnPairValuesToBeEqual(
+            column_A="SCHEDULED_FLIGHT_COUNT", column_B="_expected_scheduled"
+        ),
     ]
 
     for e in expectations:
