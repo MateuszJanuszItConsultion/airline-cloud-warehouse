@@ -35,7 +35,9 @@ jobs:
       
       - name: Install dependencies
         run: |
-          pip install apache-airflow==3.3.0 apache-airflow-providers-databricks databricks-sdk pandas numpy pyarrow pytest
+          pip install apache-airflow==3.3.0  
+          pip install -r airflow/requirements.txt
+          
       
       - name: Run DAG tests
         run: pytest airflow/tests/ -v
