@@ -1,18 +1,20 @@
 import sys
+
 sys.path.insert(0, "/usr/local/airflow")
 
+from datetime import timedelta
+
 from airflow.decorators import dag, task
-from airflow.providers.databricks.operators.databricks import DatabricksSubmitRunOperator
-from airflow.providers.databricks.operators.databricks_sql import DatabricksSqlOperator
 from airflow.hooks.base import BaseHook
 from airflow.models import Variable
+from airflow.providers.databricks.operators.databricks import DatabricksSubmitRunOperator
+from airflow.providers.databricks.operators.databricks_sql import DatabricksSqlOperator
 from databricks.sdk import WorkspaceClient
 from pendulum import datetime
 
+from ingestion.generate_aircraft_utilization import generate_aircraft_utilization
 from ingestion.generate_random_flights import generate_flights
 from ingestion.generate_weather_data import generate_weather
-from ingestion.generate_aircraft_utilization import generate_aircraft_utilization
-from datetime import timedelta 
 
 WAREHOUSE_ID = Variable.get("DATABRICKS_WAREHOUSE_ID")
 CATALOG = Variable.get("DATABRICKS_CATALOG")
@@ -21,7 +23,9 @@ GIT_BRANCH = Variable.get("DBT_GIT_BRANCH")
 
 FLIGHTS_VOLUME_PATH = "/Volumes/airline_cloud_warehouse/bronze/airline_bronze_raw_files/flights"
 WEATHER_VOLUME_PATH = "/Volumes/airline_cloud_warehouse/bronze/airline_bronze_raw_files/weather"
-AIRCRAFT_UTILIZATION_VOLUME_PATH = "/Volumes/airline_cloud_warehouse/bronze/airline_bronze_raw_files/aircraft_utilization"
+AIRCRAFT_UTILIZATION_VOLUME_PATH = (
+    "/Volumes/airline_cloud_warehouse/bronze/airline_bronze_raw_files/aircraft_utilization"
+)
 
 def upload_to_volume(local_path: str, volume_path: str):
     conn = BaseHook.get_connection("databricks")

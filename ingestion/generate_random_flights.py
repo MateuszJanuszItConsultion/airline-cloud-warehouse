@@ -1,9 +1,11 @@
 import argparse
 import sys
-import pandas as pd
-import numpy as np
 from datetime import datetime, timedelta
 from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from ingestion.reference_data import load_airport_codes, load_carriers
 from ingestion.validation import validate_flights
