@@ -1,0 +1,28 @@
+name: Ingestion Tests
+
+on:
+  push:
+    branches: [ master ]
+
+permissions:
+  contents: read
+  
+jobs:
+  test-ingestion:
+    runs-on: ubuntu-latest
+
+    steps:
+        - name: Checkout repo
+          uses: actions/checkout@v3
+
+        - name: Set up Python
+          uses: actions/setup-python@v7
+          with:
+            python-version: '3.13'
+        
+        - name: Install dependencies
+          run: pip install pandas numpy pyarrow great_expectations==1.11.3 pytest
+
+        - name: Run ingestion tests
+          run: pytest ingestion/tests/ -v
+
