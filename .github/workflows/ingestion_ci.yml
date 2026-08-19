@@ -6,7 +6,7 @@ on:
 
 permissions:
   contents: read
-
+  
 jobs:
   test-ingestion:
     runs-on: ubuntu-latest
