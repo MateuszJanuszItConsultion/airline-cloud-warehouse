@@ -12,3 +12,4 @@ sources:
       - name: flights_raw
       - name: weather_raw
       - name: aircraft_utilization_raw
+      - name: currency_rates_raw
