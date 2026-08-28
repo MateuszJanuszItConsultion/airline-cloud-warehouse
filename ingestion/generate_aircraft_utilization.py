@@ -15,6 +15,7 @@ AIRCRAFT_KEYS = load_tail_numbers()
 AIRPORTS = load_airport_codes()
 
 # Default seat capacity for aircraft, used to calculate available seat kilometers (ASK)
+#
 DEFAULT_SEAT_CAPACITY = 180
 
 def generate_aircraft_utilization(run_date: datetime, output_dir: str = "data"):
