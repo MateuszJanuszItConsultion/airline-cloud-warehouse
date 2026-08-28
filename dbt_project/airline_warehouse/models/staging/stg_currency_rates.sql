@@ -1,36 +1,36 @@
 {{ config(materialized='table') }}
 
-with source as (
-    select * from {{ source('bronze', 'currency_rates_raw') }}
+WITH source AS (
+    SELECT * FROM {{ source('bronze', 'currency_rates_raw') }}
 ),
 
-renamed as (
-    select
+renamed AS (
+    SELECT
         currency_code,
         base_currency,
         rate_to_base,
-        cast(rate_date as date) as rate_date,
+        cast(rate_date AS date) AS rate_date,
         _ingested_at,
         _source_file
-    from source
+    FROM source
 ),
 
-deduplicated as (
-    select
+deduplicated AS (
+    SELECT
         *,
-        row_number() over (
-            partition by currency_code, rate_date
-            order by _ingested_at desc
-        ) as _row_num
-    from renamed
+        row_number() OVER (
+            PARTITION BY currency_code, rate_date
+            ORDER BY _ingested_at DESC
+        ) AS _row_num
+    FROM renamed
 )
 
-select
+SELECT
     currency_code,
     base_currency,
     rate_to_base,
     rate_date,
     _ingested_at,
     _source_file
-from deduplicated
-where _row_num = 1
+FROM deduplicated
+WHERE _row_num = 1
