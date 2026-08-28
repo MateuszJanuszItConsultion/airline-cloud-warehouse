@@ -309,3 +309,17 @@ models:
         description: "Aircraft tail number — not unique in this table, use aircraft_scd_key for joins requiring a single row"
         tests:
           - not_null
+
+  - name: dim_currency_scd2
+    description: "SCD Type 2 dimension tracking historical changes to currency exchange rates over time, sourced from Frankfurter API (ECB reference rates). One row per distinct version of each currency's rate."
+    columns:
+      - name: currency_scd_key
+        description: "Surrogate key uniquely identifying a specific version of a currency rate (hash of currency_code + valid_from)"
+        tests:
+          - unique
+          - not_null
+
+      - name: currency_code
+        description: "ISO currency code — not unique in this table, use currency_scd_key for joins requiring a single row"
+        tests:
+          - not_null
