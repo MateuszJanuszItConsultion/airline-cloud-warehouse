@@ -13,9 +13,9 @@ from databricks.sdk import WorkspaceClient
 from pendulum import datetime
 
 from ingestion.generate_aircraft_utilization import generate_aircraft_utilization
+from ingestion.generate_currency_rates import generate_currency_rates
 from ingestion.generate_random_flights import generate_flights
 from ingestion.generate_weather_data import generate_weather
-from ingestion.generate_currency_rates import generate_currency_rates
 
 WAREHOUSE_ID = Variable.get("DATABRICKS_WAREHOUSE_ID")
 CATALOG = Variable.get("DATABRICKS_CATALOG")
@@ -216,7 +216,12 @@ def extraction_and_dbt_dag():
     generate_and_upload_aircraft_utilization() >> load_aircraft_utilization_to_bronze
     generate_and_upload_currency() >> load_currency_to_bronze
 
-    [load_flights_to_bronze, load_weather_to_bronze, load_aircraft_utilization_to_bronze, load_currency_to_bronze] >> submit_dbt_run
+    [
+        load_flights_to_bronze, 
+        load_weather_to_bronze, 
+        load_aircraft_utilization_to_bronze, 
+        load_currency_to_bronze
+    ] >> submit_dbt_run
 
 
 extraction_and_dbt_dag()
