@@ -8,10 +8,12 @@ permissions:
   contents: read
 
 jobs:
-  # NOTE: intentionally no path filter (`if:` / `paths:`) here.
-  # github.event.pull_request.changed_files is a count (int), not a file list —
-  # any `contains(..., 'path')` check against it always evaluates to false,
-  # silently skipping this job forever. This workflow is cheap enough to always run.
+  # NOTE: uses dorny/paths-filter for selective execution (see step below),
+  # NOT github.event.pull_request.changed_files with contains() — that field
+  # is a count (int), not a file list, and any contains() check against it
+  # always evaluates to false, silently skipping this job forever.
+  # This was a real regression in this repo (fixed twice) before switching
+  # to paths-filter, which correctly reports skipped/passed status either way.
   validate-dags:
     runs-on: ubuntu-latest
     env:
@@ -28,21 +30,35 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v7
 
+      - name: Check for airflow changes
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            airflow_changes:
+              - 'airflow/**'
+              - 'ingestion/**'
+
       - name: Set up Python
+        if: steps.filter.outputs.airflow_changes == 'true'
         uses: actions/setup-python@v7
         with:
           python-version: '3.12'
       
       - name: Install dependencies
+        if: steps.filter.outputs.airflow_changes == 'true'      
         run: |
           pip install apache-airflow==3.3.0  
           pip install -r airflow/requirements.txt       
       
       - name: Install ruff
+        if: steps.filter.outputs.airflow_changes == 'true'      
         run: pip install ruff
 
       - name: Lint Python
+        if: steps.filter.outputs.airflow_changes == 'true'      
         run: ruff check ingestion/ airflow/dags/
 
       - name: Run DAG tests
+        if: steps.filter.outputs.airflow_changes == 'true'      
         run: pytest airflow/tests/ -v

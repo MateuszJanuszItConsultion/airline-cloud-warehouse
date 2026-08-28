@@ -13,16 +13,27 @@ jobs:
 
     steps:
         - name: Checkout repo
-          uses: actions/checkout@v3
+          uses: actions/checkout@v7
+
+        - name: Check for ingestion changes
+          id: filter
+          uses: dorny/paths-filter@v3
+          with:
+            filters: |
+              ingestion_changes:
+                - 'ingestion/**'
 
         - name: Set up Python
+          if: steps.filter.outputs.ingestion_changes == 'true'        
           uses: actions/setup-python@v7
           with:
             python-version: '3.13'
         
         - name: Install dependencies
+          if: steps.filter.outputs.ingestion_changes == 'true'
           run: pip install pandas numpy pyarrow great_expectations==1.11.3 pytest
 
         - name: Run ingestion tests
+          if: steps.filter.outputs.ingestion_changes == 'true'
           run: pytest ingestion/tests/ -v
 

@@ -139,6 +139,10 @@ Requires a `.env` file (not committed) with `DATABRICKS_HOST`, `DATABRICKS_HTTP_
 - Every PR touching `airflow/**` validates that all DAGs import without errors, using Airflow's `DagBag`.
 - `master` is protected: changes only land via reviewed, passing PRs.
 
+## BI Dashboard
+
+A Databricks SQL Dashboard ("Airline Operations Overview") visualizes key metrics from the Gold layer — departure delay trends, flight volume by airport, weather impact on delays, and overall on-time performance.
+
 ## Documentation
 
 Full dbt documentation (models, lineage graph, tests) is available at:
