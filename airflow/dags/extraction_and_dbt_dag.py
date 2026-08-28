@@ -15,6 +15,7 @@ from pendulum import datetime
 from ingestion.generate_aircraft_utilization import generate_aircraft_utilization
 from ingestion.generate_random_flights import generate_flights
 from ingestion.generate_weather_data import generate_weather
+from ingestion.generate_currency_rates import generate_currency_rates
 
 WAREHOUSE_ID = Variable.get("DATABRICKS_WAREHOUSE_ID")
 CATALOG = Variable.get("DATABRICKS_CATALOG")
@@ -25,6 +26,9 @@ FLIGHTS_VOLUME_PATH = "/Volumes/airline_cloud_warehouse/bronze/airline_bronze_ra
 WEATHER_VOLUME_PATH = "/Volumes/airline_cloud_warehouse/bronze/airline_bronze_raw_files/weather"
 AIRCRAFT_UTILIZATION_VOLUME_PATH = (
     "/Volumes/airline_cloud_warehouse/bronze/airline_bronze_raw_files/aircraft_utilization"
+)
+CURRENCY_VOLUME_PATH = (
+    "/Volumes/airline_cloud_warehouse/bronze/airline_bronze_raw_files/currency_rates"
 )
 
 def upload_to_volume(local_path: str, volume_path: str):
@@ -71,6 +75,12 @@ def extraction_and_dbt_dag():
         run_date = logical_date.replace(tzinfo=None)
         local_path = generate_aircraft_utilization(run_date, output_dir="/usr/local/airflow/data")
         upload_to_volume(local_path, AIRCRAFT_UTILIZATION_VOLUME_PATH)
+
+    @task
+    def generate_and_upload_currency(logical_date=None):
+        run_date = logical_date.replace(tzinfo=None)
+        local_path = generate_currency_rates(run_date, output_dir="/usr/local/airflow/data")
+        upload_to_volume(local_path, CURRENCY_VOLUME_PATH)   
 
     load_flights_to_bronze = DatabricksSqlOperator(
         task_id="load_flights_to_bronze",
@@ -147,7 +157,27 @@ def extraction_and_dbt_dag():
             )
             FILEFORMAT = PARQUET;
         """,
-    ) 
+    )
+
+    load_currency_to_bronze = DatabricksSqlOperator(
+        task_id="load_currency_to_bronze",
+        databricks_conn_id="databricks",
+        http_path=f"/sql/1.0/warehouses/{WAREHOUSE_ID}",
+        sql=f"""
+            COPY INTO {CATALOG}.bronze.currency_rates_raw
+            FROM (
+                SELECT
+                    CURRENCY_CODE          AS currency_code,
+                    BASE_CURRENCY          AS base_currency,
+                    RATE_TO_BASE            AS rate_to_base,
+                    RATE_DATE               AS rate_date,
+                    current_timestamp()     AS _ingested_at,
+                    _metadata.file_path     AS _source_file
+                FROM '{CURRENCY_VOLUME_PATH}/'
+            )
+            FILEFORMAT = PARQUET;
+        """,
+    )
 
     submit_dbt_run = DatabricksSubmitRunOperator(
         task_id="submit_dbt_run",
@@ -184,8 +214,9 @@ def extraction_and_dbt_dag():
     generate_and_upload_flights() >> load_flights_to_bronze
     generate_and_upload_weather() >> load_weather_to_bronze
     generate_and_upload_aircraft_utilization() >> load_aircraft_utilization_to_bronze
+    generate_and_upload_currency() >> load_currency_to_bronze
 
-    [load_flights_to_bronze, load_weather_to_bronze, load_aircraft_utilization_to_bronze] >> submit_dbt_run
+    [load_flights_to_bronze, load_weather_to_bronze, load_aircraft_utilization_to_bronze, load_currency_to_bronze] >> submit_dbt_run
 
 
 extraction_and_dbt_dag()

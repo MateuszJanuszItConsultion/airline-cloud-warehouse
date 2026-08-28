@@ -6,3 +6,4 @@ pandas
 numpy
 pyarrow
 pytest
+requests
