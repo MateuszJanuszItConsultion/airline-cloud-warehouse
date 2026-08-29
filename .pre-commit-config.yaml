@@ -1,0 +1,15 @@
+repos:
+  - repo: local
+    hooks:
+      - id: ruff
+        name: ruff (ingestion + airflow/dags)
+        entry: ruff check --fix
+        language: system
+        files: ^(ingestion|airflow/dags)/.*\.py$
+
+      - id: sqlfluff-lint
+        name: sqlfluff lint (dbt models)
+        entry: python scripts/run_sqlfluff.py
+        language: system
+        files: ^dbt_project/airline_warehouse/models/.*\.sql$
+        pass_filenames: false
