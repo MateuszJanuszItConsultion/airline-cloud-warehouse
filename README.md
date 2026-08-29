@@ -133,6 +133,15 @@ astro dev start
 
 Requires a `.env` file (not committed) with `DATABRICKS_HOST`, `DATABRICKS_HTTP_PATH`, and `DATABRICKS_TOKEN`.
 
+## Development setup
+
+Install development dependencies (linting, pre-commit hooks):
+
+```bash
+pip install -r requirements-dev.txt
+pre-commit install
+```
+
 ## CI/CD
 
 - Every PR touching `dbt_project/**` runs `dbt build` against Databricks via GitHub Actions.
