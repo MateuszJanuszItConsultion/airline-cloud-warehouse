@@ -1,0 +1,24 @@
+name: Start Azure VM
+
+on:
+  schedule:
+    - cron: '50 5 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  start-vm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Start VM
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            az vm start --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AZURE_VM_NAME }}
