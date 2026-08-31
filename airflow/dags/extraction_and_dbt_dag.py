@@ -1,3 +1,4 @@
+# Deployed automatically to Azure VM via GitHub Actions self-hosted runner (see deploy_airflow_azure.yml)
 import sys
 
 sys.path.insert(0, "/usr/local/airflow")
