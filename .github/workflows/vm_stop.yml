@@ -1,8 +1,6 @@
 name: Stop Azure VM
 
 on:
-  schedule:
-    - cron: '50 6 * * *'
   workflow_dispatch:
 
 permissions:
