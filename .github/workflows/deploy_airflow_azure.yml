@@ -1,0 +1,28 @@
+name: Deploy to Azure VM
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'airflow/**'
+      - 'ingestion/**'
+      - 'dbt_project/**'
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, azure-airline-vm]
+    steps:
+      - name: Pull latest code
+        run: |
+          cd ~/projects/airline-cloud-warehouse
+          git fetch origin master
+          git reset --hard origin/master
+
+      - name: Restart Airflow
+        run: |
+          cd ~/projects/airline-cloud-warehouse/airflow
+          astro dev stop
+          astro dev start
