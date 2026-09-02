@@ -16,11 +16,22 @@
     )
 }}
 
+with latest as (
+    select
+        currency_code,
+        base_currency,
+        rate_to_base,
+        rate_date,
+        row_number() over (partition by currency_code order by rate_date desc) as _rn
+    from {{ ref('stg_currency_rates') }}
+)
+
 select
     currency_code,
     base_currency,
     rate_to_base,
     rate_date
-from {{ ref('stg_currency_rates') }}
+from latest
+where _rn = 1
 
 {% endsnapshot %}

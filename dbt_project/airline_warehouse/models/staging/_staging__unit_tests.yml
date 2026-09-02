@@ -1,0 +1,21 @@
+unit_tests:
+  - name: test_delay_category_boundaries
+    description: "Verify delay_category correctly classifies flights at exact boundary values (15 and 60 minutes)"
+    model: stg_flights
+    given:
+      - input: source('bronze', 'flights_raw')
+        rows:
+          - {fl_date: "2026-01-01", op_carrier: "AA", op_carrier_fl_num: 100, origin: "JFK", dest: "LAX", dep_delay: "15", arr_delay: "10", cancelled: "0", _ingested_at: "2026-01-01T00:00:00", _source_file: "test"}
+          - {fl_date: "2026-01-01", op_carrier: "AA", op_carrier_fl_num: 101, origin: "JFK", dest: "LAX", dep_delay: "16", arr_delay: "10", cancelled: "0", _ingested_at: "2026-01-01T00:00:00", _source_file: "test"}
+          - {fl_date: "2026-01-01", op_carrier: "AA", op_carrier_fl_num: 102, origin: "JFK", dest: "LAX", dep_delay: "60", arr_delay: "10", cancelled: "0", _ingested_at: "2026-01-01T00:00:00", _source_file: "test"}
+          - {fl_date: "2026-01-01", op_carrier: "AA", op_carrier_fl_num: 103, origin: "JFK", dest: "LAX", dep_delay: "61", arr_delay: "10", cancelled: "0", _ingested_at: "2026-01-01T00:00:00", _source_file: "test"}
+          - {fl_date: "2026-01-01", op_carrier: "AA", op_carrier_fl_num: 104, origin: "JFK", dest: "LAX", dep_delay: null, arr_delay: null, cancelled: "0", _ingested_at: "2026-01-01T00:00:00", _source_file: "test"}
+          - {fl_date: "2026-01-01", op_carrier: "AA", op_carrier_fl_num: 105, origin: "JFK", dest: "LAX", dep_delay: "5", arr_delay: "5", cancelled: "1", _ingested_at: "2026-01-01T00:00:00", _source_file: "test"}
+    expect:
+      rows:
+        - {flight_number: 100, delay_category: "on_time"}
+        - {flight_number: 101, delay_category: "minor_delay"}
+        - {flight_number: 102, delay_category: "minor_delay"}
+        - {flight_number: 103, delay_category: "major_delay"}
+        - {flight_number: 104, delay_category: "unknown"}
+        - {flight_number: 105, delay_category: "cancelled"}
