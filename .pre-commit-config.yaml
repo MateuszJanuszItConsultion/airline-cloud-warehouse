@@ -13,3 +13,10 @@ repos:
         language: system
         files: ^dbt_project/airline_warehouse/models/.*\.sql$
         pass_filenames: false
+
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v3.4.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args: [feat, fix, refactor, chore, docs, test]
