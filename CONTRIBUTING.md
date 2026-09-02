@@ -2,7 +2,7 @@
 
 ## Commit message convention
 
-This project follows [Conventional Commits](https://www.conventionalcommits.org/). Every commit message should start with a type prefix:
+This project follows [Conventional Commits](https://www.conventionalcommits.org/), **enforced automatically via a pre-commit hook** (see `.pre-commit-config.yaml`). Run `pre-commit install --hook-type commit-msg` after cloning to activate it locally.
 
 | Prefix | Use for |
 |---|---|
