@@ -24,5 +24,8 @@ SELECT
 FROM {{ ref('stg_aircraft_utilization') }}
 
 {% if is_incremental() %}
-    WHERE flight_date > (SELECT max(flight_date) FROM {{ this }})
+    WHERE flight_date > coalesce(
+        (SELECT max(flight_date) FROM {{ this }}),
+        cast('1900-01-01' AS date)
+    )
 {% endif %}
