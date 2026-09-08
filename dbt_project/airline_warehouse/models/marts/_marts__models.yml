@@ -323,3 +323,21 @@ models:
         description: "ISO currency code — not unique in this table, use currency_scd_key for joins requiring a single row"
         tests:
           - not_null
+
+  - name: dim_route
+    description: "Dimension representing unique directional routes (origin-destination pairs) observed in flight data. JFK→LAX and LAX→JFK are treated as distinct routes."
+    columns:
+      - name: origin_airport
+        tests:
+          - not_null
+
+      - name: dest_airport
+        tests:
+          - not_null
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - origin_airport
+              - dest_airport
