@@ -8,13 +8,14 @@ from datetime import timedelta
 from airflow.decorators import dag, task
 from airflow.hooks.base import BaseHook
 from airflow.models import Variable
-from airflow.providers.databricks.operators.databricks import DatabricksSubmitRunOperator
+from airflow.providers.databricks.operators.databricks import DatabricksRunNowOperator, DatabricksSubmitRunOperator
 from airflow.providers.databricks.operators.databricks_sql import DatabricksSqlOperator
 from databricks.sdk import WorkspaceClient
 from pendulum import datetime
 
 from ingestion.generate_aircraft_utilization import generate_aircraft_utilization
 from ingestion.generate_currency_rates import generate_currency_rates
+from ingestion.generate_flight_events import generate_flight_events
 from ingestion.generate_random_flights import generate_flights
 from ingestion.generate_weather_data import generate_weather
 
@@ -30,6 +31,10 @@ AIRCRAFT_UTILIZATION_VOLUME_PATH = (
 )
 CURRENCY_VOLUME_PATH = (
     "/Volumes/airline_cloud_warehouse/bronze/airline_bronze_raw_files/currency_rates"
+)
+
+FLIGHT_EVENTS_VOLUME_PATH = (
+    "/Volumes/airline_cloud_warehouse/bronze/airline_bronze_raw_files/flight_events"
 )
 
 def upload_to_volume(local_path: str, volume_path: str):
@@ -81,7 +86,14 @@ def extraction_and_dbt_dag():
     def generate_and_upload_currency(logical_date=None):
         run_date = logical_date.replace(tzinfo=None)
         local_path = generate_currency_rates(run_date, output_dir="/usr/local/airflow/data")
-        upload_to_volume(local_path, CURRENCY_VOLUME_PATH)   
+        upload_to_volume(local_path, CURRENCY_VOLUME_PATH)
+
+    @task
+    def generate_and_upload_flight_events(logical_date=None):
+        run_date = logical_date.replace(tzinfo=None)
+        local_paths = generate_flight_events(run_date, output_dir="/usr/local/airflow/data/flight_events")
+        for path in local_paths:
+            upload_to_volume(path, FLIGHT_EVENTS_VOLUME_PATH)
 
     load_flights_to_bronze = DatabricksSqlOperator(
         task_id="load_flights_to_bronze",
@@ -212,10 +224,17 @@ def extraction_and_dbt_dag():
         },
     )
 
+    run_autoloader_flight_events = DatabricksRunNowOperator(
+        task_id="run_autoloader_flight_events",
+        databricks_conn_id="databricks",
+        job_id="1008345849009729",
+    )
+
     generate_and_upload_flights() >> load_flights_to_bronze
     generate_and_upload_weather() >> load_weather_to_bronze
     generate_and_upload_aircraft_utilization() >> load_aircraft_utilization_to_bronze
     generate_and_upload_currency() >> load_currency_to_bronze
+    generate_and_upload_flight_events() >> run_autoloader_flight_events
 
     [
         load_flights_to_bronze, 
