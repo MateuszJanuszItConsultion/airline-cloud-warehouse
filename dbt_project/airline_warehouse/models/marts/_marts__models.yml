@@ -341,3 +341,17 @@ models:
             combination_of_columns:
               - origin_airport
               - dest_airport
+
+  - name: fact_flight_lifecycle
+    description: "Accumulating snapshot fact — one row per flight, updated in place as lifecycle events (scheduled, boarding, departed, landed, arrived) arrive. Uses incremental merge with merge_update_columns to avoid overwriting already-populated milestone timestamps with NULL."
+    columns:
+      - name: flight_date
+        tests:
+          - not_null
+
+      - name: current_stage
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['scheduled', 'boarding', 'departed', 'landed', 'arrived', 'unknown']
