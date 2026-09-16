@@ -10,3 +10,4 @@ CREATE TABLE IF NOT EXISTS airline_cloud_warehouse.bronze.flights_raw (
   _ingested_at TIMESTAMP,
   _source_file STRING)
 USING delta
+CLUSTER BY (fl_date);

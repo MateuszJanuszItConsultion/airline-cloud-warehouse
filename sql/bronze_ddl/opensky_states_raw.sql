@@ -22,3 +22,4 @@ CREATE TABLE airline_cloud_warehouse.bronze.opensky_states_raw (
   _rescued_data STRING )
 USING delta
 COMMENT 'Raw aircraft state vectors from OpenSky Network REST API, filtered to a continental US bounding box.'
+CLUSTER BY (snapshot_time);
