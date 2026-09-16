@@ -14,3 +14,4 @@ sources:
       - name: aircraft_utilization_raw
       - name: currency_rates_raw
       - name: flight_events_raw
+      - name: opensky_states_raw

@@ -115,3 +115,22 @@ models:
         description: "The date of the flight event"
         tests:
           - not_null
+
+  - name: stg_opensky_states
+    description: "Deduplicated aircraft state vectors from OpenSky Network, filtered to a continental US bounding box. Preserves full position history — the same aircraft (icao24) legitimately appears multiple times across different snapshot_timestamp values, representing its trajectory over time."
+    columns:
+      - name: icao24
+        description: "Unique ICAO 24-bit transponder address, identifies the aircraft"
+        tests:
+          - not_null
+
+      - name: snapshot_timestamp
+        tests:
+          - not_null
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - icao24
+              - snapshot_timestamp
