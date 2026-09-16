@@ -7,4 +7,5 @@ CREATE TABLE IF NOT EXISTS airline_cloud_warehouse.bronze.currency_rates_raw (
   _source_file STRING
 )
 USING DELTA
-COMMENT 'Raw daily currency exchange rates fetched from Frankfurter API (ECB reference rates)';
+COMMENT 'Raw daily currency exchange rates fetched from Frankfurter API (ECB reference rates)'
+CLUSTER BY (rate_date);
