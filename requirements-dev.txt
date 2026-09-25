@@ -3,3 +3,4 @@ sqlfluff
 sqlfluff-templater-dbt
 ruff
 pytest
+confluent-kafka

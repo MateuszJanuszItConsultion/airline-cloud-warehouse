@@ -51,7 +51,7 @@ jobs:
 
       - name: Lint Python
         if: steps.filter.outputs.airflow_changes == 'true'      
-        run: ruff check ingestion/ airflow/dags/
+        run: ruff check ingestion/ airflow/dags/ streaming/
 
       - name: Run DAG tests
         if: steps.filter.outputs.airflow_changes == 'true'      
