@@ -10,7 +10,8 @@ from pathlib import Path
 
 from confluent_kafka import Producer
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+# Databricks runs Python script tasks via exec(), where __file__ is undefined; fall back to argv[0].
+sys.path.insert(0, str(Path(globals().get("__file__") or sys.argv[0]).resolve().parent.parent))
 
 from ingestion.reference_data import load_tail_numbers
 
