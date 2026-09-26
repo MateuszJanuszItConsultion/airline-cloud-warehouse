@@ -28,14 +28,22 @@ def delivery_report(err, msg) -> None:
 
 
 def build_producer() -> Producer:
-    return Producer(
-        {
-            "bootstrap.servers": os.environ.get("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092"),
-            "acks": "all",
-            "enable.idempotence": True,
-            "partitioner": "murmur2_random",
-        }
-    )
+    config = {
+        "bootstrap.servers": os.environ.get("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092"),
+        "acks": "all",
+        "enable.idempotence": True,
+        "partitioner": "murmur2_random",
+    }
+    if os.environ.get("KAFKA_SECURITY_PROTOCOL") == "SSL":
+        config.update(
+            {
+                "security.protocol": "SSL",
+                "ssl.ca.location": os.environ["KAFKA_SSL_CA_LOCATION"],
+                "ssl.certificate.location": os.environ["KAFKA_SSL_CERT_LOCATION"],
+                "ssl.key.location": os.environ["KAFKA_SSL_KEY_LOCATION"],
+            }
+        )
+    return Producer(config)
 
 
 def initial_state(tail_number: str) -> dict:

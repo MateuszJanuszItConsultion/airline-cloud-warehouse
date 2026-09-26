@@ -41,6 +41,9 @@ logs/
 .env
 .env.*
 !.env.example
+*.pem
+*.key
+*.cert
 
 # --- Editors / OS ---
 .vscode/
