@@ -27,22 +27,46 @@ def delivery_report(err, msg) -> None:
         logger.info("Delivered key=%s partition=%s offset=%s", msg.key().decode(), msg.partition(), msg.offset())
 
 
-def build_producer() -> Producer:
+def _secret_scope_ssl_config(scope: str) -> dict:
+    # Imported lazily: dbutils exists only in the Databricks runtime, not locally.
+    from databricks.sdk.runtime import dbutils
+
+    return {
+        "bootstrap.servers": dbutils.secrets.get(scope, "bootstrap_servers"),
+        "security.protocol": "SSL",
+        "ssl.ca.pem": dbutils.secrets.get(scope, "ca_pem"),
+        "ssl.certificate.pem": dbutils.secrets.get(scope, "service_cert"),
+        "ssl.key.pem": dbutils.secrets.get(scope, "service_key"),
+    }
+
+
+def _file_ssl_config() -> dict:
+    return {
+        "security.protocol": "SSL",
+        "ssl.ca.location": os.environ["KAFKA_SSL_CA_LOCATION"],
+        "ssl.certificate.location": os.environ["KAFKA_SSL_CERT_LOCATION"],
+        "ssl.key.location": os.environ["KAFKA_SSL_KEY_LOCATION"],
+    }
+
+
+def build_producer(secret_scope: str | None = None) -> Producer:
+    """Build a producer for one of three environments, selected by configuration only:
+
+    - secret_scope given: managed Kafka (Aiven) with certificates from Databricks Secret Scopes
+    - KAFKA_SECURITY_PROTOCOL=SSL: managed Kafka with certificate files referenced from .env
+    - otherwise: local PLAINTEXT broker (Docker lab)
+    """
     config = {
         "bootstrap.servers": os.environ.get("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092"),
         "acks": "all",
         "enable.idempotence": True,
+        # Match the Java client's murmur2 hashing so the same key maps to the same partition across clients.
         "partitioner": "murmur2_random",
     }
-    if os.environ.get("KAFKA_SECURITY_PROTOCOL") == "SSL":
-        config.update(
-            {
-                "security.protocol": "SSL",
-                "ssl.ca.location": os.environ["KAFKA_SSL_CA_LOCATION"],
-                "ssl.certificate.location": os.environ["KAFKA_SSL_CERT_LOCATION"],
-                "ssl.key.location": os.environ["KAFKA_SSL_KEY_LOCATION"],
-            }
-        )
+    if secret_scope:
+        config.update(_secret_scope_ssl_config(secret_scope))
+    elif os.environ.get("KAFKA_SECURITY_PROTOCOL") == "SSL":
+        config.update(_file_ssl_config())
     return Producer(config)
 
 
@@ -65,10 +89,15 @@ def advance(state: dict) -> dict:
     return state
 
 
-def produce_telemetry(n_aircraft: int = 5, n_ticks: int = 5, tick_seconds: float = 1.0) -> None:
-    producer = build_producer()
+def produce_telemetry(
+    n_aircraft: int = 5,
+    n_ticks: int = 5,
+    tick_seconds: float = 1.0,
+    secret_scope: str | None = None,
+) -> None:
+    producer = build_producer(secret_scope)
 
-    metadata = producer.list_topics(TOPIC, timeout=5)
+    metadata = producer.list_topics(TOPIC, timeout=10)
     topic_metadata = metadata.topics[TOPIC]
     if topic_metadata.error is not None:
         raise RuntimeError(f"Topic '{TOPIC}' is not available: {topic_metadata.error}")
@@ -93,6 +122,12 @@ if __name__ == "__main__":
     parser.add_argument("--n-aircraft", type=int, default=5)
     parser.add_argument("--n-ticks", type=int, default=5)
     parser.add_argument("--tick-seconds", type=float, default=1.0)
+    parser.add_argument(
+        "--secret-scope",
+        type=str,
+        default=None,
+        help="Databricks Secret Scope holding Kafka certificates; omit to use local config",
+    )
     args = parser.parse_args()
 
-    produce_telemetry(args.n_aircraft, args.n_ticks, args.tick_seconds)
+    produce_telemetry(args.n_aircraft, args.n_ticks, args.tick_seconds, args.secret_scope)
