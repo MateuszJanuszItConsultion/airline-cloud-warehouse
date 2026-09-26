@@ -134,3 +134,33 @@ models:
             combination_of_columns:
               - icao24
               - snapshot_timestamp
+
+  - name: stg_aircraft_telemetry
+    description: "Parsed aircraft telemetry from Kafka (Aiven), deduplicated on Kafka coordinates. Only records passing all quarantine checks."
+    columns:
+      - name: tail_number
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_aircraft')
+                field: tail_number
+      - name: event_timestamp
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - kafka_partition
+              - kafka_offset
+
+  - name: stg_aircraft_telemetry_quarantine
+    description: "Kafka telemetry messages rejected by Silver validation, with the reason. Raw value preserved for investigation."
+    columns:
+      - name: quarantine_reason
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['malformed_json', 'schema_mismatch', 'key_mismatch']
