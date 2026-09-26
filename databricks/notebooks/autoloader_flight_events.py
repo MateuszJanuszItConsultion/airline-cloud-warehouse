@@ -1,3 +1,5 @@
+from pyspark.sql.functions import col, current_timestamp
+
 # Databricks notebook source
 bronze_table = "airline_cloud_warehouse.bronze.flight_events_raw"
 source_path = "/Volumes/airline_cloud_warehouse/bronze/airline_bronze_raw_files/flight_events/"
@@ -18,8 +20,6 @@ df = (
 
 
 # COMMAND ----------
-
-from pyspark.sql.functions import current_timestamp, col
 
 df_with_metadata = (
     df

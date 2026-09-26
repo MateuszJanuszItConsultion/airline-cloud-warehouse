@@ -1,8 +1,9 @@
 # Databricks notebook source
-import requests
 import json
-import os
 from datetime import datetime
+
+import requests
+from pyspark.sql.functions import col, current_timestamp
 
 TOKEN_URL = "https://auth.opensky-network.org/auth/realms/opensky-network/protocol/openid-connect/token"
 STATES_URL = "https://opensky-network.org/api/states/all"
@@ -43,7 +44,8 @@ rows = [dict(zip(STATE_VECTOR_COLUMNS, state)) for state in (data.get("states") 
 for row in rows:
     row["snapshot_time"] = data["time"]
 
-output_path = f"/Volumes/airline_cloud_warehouse/bronze/airline_bronze_raw_files/opensky/opensky_states_{datetime.now():%Y%m%d_%H%M%S}.json"
+output_dir = "/Volumes/airline_cloud_warehouse/bronze/airline_bronze_raw_files/opensky"
+output_path = f"{output_dir}/opensky_states_{datetime.now():%Y%m%d_%H%M%S}.json"
 
 with open(output_path, "w") as f:
     for row in rows:
@@ -57,8 +59,6 @@ bronze_table = "airline_cloud_warehouse.bronze.opensky_states_raw"
 source_path = "/Volumes/airline_cloud_warehouse/bronze/airline_bronze_raw_files/opensky/"
 checkpoint_path = "/Volumes/airline_cloud_warehouse/bronze/streaming_checkpoints/opensky/"
 schema_path = "/Volumes/airline_cloud_warehouse/bronze/streaming_checkpoints/opensky_schema/"
-
-from pyspark.sql.functions import current_timestamp, col
 
 df = (
     spark.readStream
