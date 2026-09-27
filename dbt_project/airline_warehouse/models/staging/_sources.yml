@@ -14,5 +14,13 @@ sources:
       - name: aircraft_utilization_raw
       - name: currency_rates_raw
       - name: flight_events_raw
-      - name: opensky_states_raw
       - name: aircraft_telemetry_raw
+        config:
+          freshness:
+            warn_after: {count: 8, period: hour}
+            error_after: {count: 16, period: hour}
+      - name: opensky_states_raw
+        config:
+          freshness:
+            warn_after: {count: 8, period: hour}
+            error_after: {count: 16, period: hour}
