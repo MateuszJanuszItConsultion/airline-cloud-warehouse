@@ -12,6 +12,15 @@ resource "azurerm_virtual_network" "sandbox" {
   tags                = local.common_tags
 }
 
+resource "azurerm_subnet" "sandbox" {
+  for_each = var.subnets
+
+  name                 = each.key
+  resource_group_name  = azurerm_resource_group.sandbox.name
+  virtual_network_name = azurerm_virtual_network.sandbox.name
+  address_prefixes     = [each.value]
+}
+
 data "azurerm_resource_group" "airline" {
   name = "rg-airline-data-engineering"
 }
