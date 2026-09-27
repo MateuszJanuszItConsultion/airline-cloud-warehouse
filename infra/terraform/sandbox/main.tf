@@ -1,10 +1,9 @@
 resource "azurerm_resource_group" "sandbox" {
   name     = "rg-tf-sandbox"
-  location = "polandcentral"
+  location = var.location
+  tags     = local.common_tags
+}
 
-  tags = {
-    project    = "airline-cloud-warehouse"
-    purpose    = "terraform-learning-s01"
-    managed_by = "terraform"
-  }
+data "azurerm_resource_group" "airline" {
+  name = "rg-airline-data-engineering"
 }
