@@ -4,7 +4,7 @@ resource "azurerm_resource_group" "sandbox" {
 
   tags = {
     project    = "airline-cloud-warehouse"
-    purpose    = "terraform-learning"
+    purpose    = "terraform-learning-s01"
     managed_by = "terraform"
   }
 }
