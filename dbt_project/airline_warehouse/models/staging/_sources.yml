@@ -14,5 +14,17 @@ sources:
       - name: aircraft_utilization_raw
       - name: currency_rates_raw
       - name: flight_events_raw
-      - name: opensky_states_raw
+      
+      # Thresholds are tied to Databricks job schedules: consumer and OpenSky
+      # run every 8h, so warn = one missed run, error = two missed runs.
+      # Changing a schedule requires revisiting these values.
       - name: aircraft_telemetry_raw
+        config:
+          freshness:
+            warn_after: {count: 12, period: hour}
+            error_after: {count: 24, period: hour}
+      - name: opensky_states_raw
+        config:
+          freshness:
+            warn_after: {count: 12, period: hour}
+            error_after: {count: 24, period: hour}
