@@ -25,3 +25,14 @@ resource "databricks_grant" "pilot_schema_users" {
   principal  = "account users"
   privileges = ["USE_SCHEMA"]
 }
+
+resource "databricks_secret_scope" "pilot" {
+  name = "tf-pilot-scope"
+}
+
+resource "databricks_secret" "pilot" {
+  scope                   = databricks_secret_scope.pilot.name
+  key                     = "pilot-key"
+  string_value_wo         = var.pilot_secret_value
+  string_value_wo_version = 1
+}
