@@ -5,3 +5,7 @@ output "current_user" {
 output "catalogs" {
   value = data.databricks_catalogs.all.ids
 }
+
+output "pilot_job_id" {
+  value = databricks_job.pilot.id
+}

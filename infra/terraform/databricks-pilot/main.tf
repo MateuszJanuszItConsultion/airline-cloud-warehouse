@@ -36,3 +36,26 @@ resource "databricks_secret" "pilot" {
   string_value_wo         = var.pilot_secret_value
   string_value_wo_version = 1
 }
+
+resource "databricks_notebook" "pilot" {
+  source = "${path.module}/notebooks/hello.py"
+  path   = "${data.databricks_current_user.me.home}/tf_pilot/hello"
+}
+
+resource "databricks_job" "pilot" {
+  name = "tf-pilot-job"
+
+  task {
+    task_key = "hello"
+
+    notebook_task {
+      notebook_path = databricks_notebook.pilot.path
+    }
+  }
+
+  schedule {
+    quartz_cron_expression = "0 0 6 * * ?"
+    timezone_id            = "Europe/Warsaw"
+    pause_status           = "PAUSED"
+  }
+}
