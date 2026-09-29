@@ -57,8 +57,9 @@ resource "databricks_job" "pilot" {
 }
 
 resource "databricks_catalog" "pilot" {
-  name    = "tf_pilot"
-  comment = "Terraform pilot - safe to delete"
+  name          = "tf_pilot"
+  comment       = "Terraform pilot - safe to delete"
+  force_destroy = true
 
   lifecycle {
     # Free Edition: catalog created in UI on Databricks Default Storage.
