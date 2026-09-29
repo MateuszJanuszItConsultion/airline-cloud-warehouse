@@ -19,3 +19,9 @@ resource "databricks_volume" "pilot" {
   schema_name  = databricks_schema.pilot.name
   volume_type  = "MANAGED"
 }
+
+resource "databricks_grant" "pilot_schema_users" {
+  schema     = databricks_schema.pilot.id
+  principal  = "account users"
+  privileges = ["USE_SCHEMA"]
+}
