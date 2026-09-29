@@ -2,12 +2,8 @@ data "databricks_current_user" "me" {}
 
 data "databricks_catalogs" "all" {}
 
-data "databricks_catalog" "pilot" {
-  name = "tf_pilot"
-}
-
 resource "databricks_schema" "pilot" {
-  catalog_name  = data.databricks_catalog.pilot.name
+  catalog_name  = databricks_catalog.pilot.name
   name          = "pilot_schema"
   comment       = "Terraform pilot schema"
   force_destroy = true
@@ -15,7 +11,7 @@ resource "databricks_schema" "pilot" {
 
 resource "databricks_volume" "pilot" {
   name         = "pilot_volume"
-  catalog_name = data.databricks_catalog.pilot.name
+  catalog_name = databricks_catalog.pilot.name
   schema_name  = databricks_schema.pilot.name
   volume_type  = "MANAGED"
 }
@@ -57,5 +53,16 @@ resource "databricks_job" "pilot" {
     quartz_cron_expression = "0 0 6 * * ?"
     timezone_id            = "Europe/Warsaw"
     pause_status           = "PAUSED"
+  }
+}
+
+resource "databricks_catalog" "pilot" {
+  name    = "tf_pilot"
+  comment = "Terraform pilot - safe to delete"
+
+  lifecycle {
+    # Free Edition: catalog created in UI on Databricks Default Storage.
+    # storage_root is platform-assigned and not managed here.
+    ignore_changes = [storage_root]
   }
 }
