@@ -61,3 +61,23 @@ resource "azurerm_management_lock" "tfstate" {
   lock_level = "CanNotDelete"
   notes      = "Holds Terraform state for all projects"
 }
+
+resource "azurerm_storage_management_policy" "tfstate" {
+  storage_account_id = azurerm_storage_account.tfstate.id
+
+  rule {
+    name    = "delete-old-versions"
+    enabled = true
+
+    filters {
+      blob_types   = ["blockBlob"]
+      prefix_match = ["tfstate/"]
+    }
+
+    actions {
+      version {
+        delete_after_days_since_creation = 90
+      }
+    }
+  }
+}
