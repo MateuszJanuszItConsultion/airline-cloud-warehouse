@@ -4,9 +4,10 @@ terraform {
   backend "azurerm" {
     storage_account_name = "terraformstatestoragemj"
     container_name       = "tfstate"
-    key                  = "sandbox.terraform.tfstate"
+    key                  = "bootstrap.terraform.tfstate"
     use_azuread_auth     = true
   }
+
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -17,4 +18,5 @@ terraform {
 
 provider "azurerm" {
   features {}
+  storage_use_azuread = true
 }
