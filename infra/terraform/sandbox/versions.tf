@@ -1,6 +1,12 @@
 terraform {
   required_version = "~> 1.16"
 
+  backend "azurerm" {
+    storage_account_name = "terraformstatestoragemj"
+    container_name       = "tfstate"
+    key                  = "sandbox.terraform.tfstate"
+    use_azuread_auth     = true
+  }
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
