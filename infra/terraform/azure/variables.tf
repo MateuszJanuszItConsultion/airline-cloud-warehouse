@@ -10,3 +10,15 @@ variable "budget_contact_email" {
   type        = string
   sensitive   = true
 }
+
+variable "ssh_allowed_source_ip" {
+  description = "IP address allowed to connect via SSH"
+  type        = string
+  sensitive   = true
+}
+
+variable "admin_username" {
+  description = "Admin username for the virtual machine"
+  type        = string
+  sensitive   = true
+}
