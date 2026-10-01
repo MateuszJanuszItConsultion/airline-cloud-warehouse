@@ -65,6 +65,7 @@ override.tf.json
 *_override.tf.json
 .terraformrc
 terraform.rc
+imports.tf
 
 # --- other ---
 data/
