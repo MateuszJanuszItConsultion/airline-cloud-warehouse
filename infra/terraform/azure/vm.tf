@@ -38,7 +38,7 @@ resource "azurerm_network_interface" "vm" {
   ip_configuration {
     name                          = "ipconfig1"
     primary                       = true
-    subnet_id                     = azurerm_subnet.main.id
+    subnet_id                     = module.network.subnet_id
     private_ip_address_allocation = "Dynamic"
     private_ip_address_version    = "IPv4"
     public_ip_address_id          = azurerm_public_ip.vm.id

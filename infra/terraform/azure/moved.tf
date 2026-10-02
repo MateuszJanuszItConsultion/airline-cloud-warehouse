@@ -1,4 +1,9 @@
 moved {
-  from = azurerm_consumption_budget_subscription.monthly
-  to   = module.budget.azurerm_consumption_budget_subscription.monthly
+  from = azurerm_subnet.main
+  to   = module.network.azurerm_subnet.main
+}
+
+moved {
+  from = azurerm_virtual_network.main
+  to   = module.network.azurerm_virtual_network.main
 }
