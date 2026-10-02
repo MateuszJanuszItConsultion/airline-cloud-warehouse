@@ -20,3 +20,12 @@ repos:
       - id: conventional-pre-commit
         stages: [commit-msg]
         args: [feat, fix, refactor, chore, docs, test]
+
+  - repo: local
+    hooks:
+      - id: terraform-fmt
+        name: terraform fmt
+        entry: terraform fmt -recursive infra/terraform
+        language: system
+        pass_filenames: false
+        files: \.tf$
