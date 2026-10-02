@@ -1,3 +1,11 @@
+locals {
+  notifications = [
+    { threshold = 50,  threshold_type = "Actual" },
+    { threshold = 80,  threshold_type = "Actual" },
+    { threshold = 100, threshold_type = "Forecasted" },
+  ]
+}
+
 data "azurerm_subscription" "current" {}
 
 resource "azurerm_consumption_budget_subscription" "monthly" {
@@ -10,27 +18,15 @@ resource "azurerm_consumption_budget_subscription" "monthly" {
     start_date = "2026-10-01T00:00:00Z"
   }
 
-  notification {
-    enabled        = true
-    threshold      = 50
-    operator       = "GreaterThan"
-    threshold_type = "Actual"
-    contact_emails = [var.contact_email]
-  }
+  dynamic "notification" {
+    for_each = local.notifications
 
-  notification {
-    enabled        = true
-    threshold      = 80
-    operator       = "GreaterThan"
-    threshold_type = "Actual"
-    contact_emails = [var.contact_email]
-  }
-
-  notification {
-    enabled        = true
-    threshold      = 100
-    operator       = "GreaterThan"
-    threshold_type = "Forecasted"
-    contact_emails = [var.contact_email]
+    content {
+      enabled        = true
+      threshold      = notification.value.threshold
+      operator       = "GreaterThan"
+      threshold_type = notification.value.threshold_type
+      contact_emails = [var.contact_email]
+    }
   }
 }
