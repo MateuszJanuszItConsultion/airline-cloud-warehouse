@@ -9,8 +9,8 @@ resource "azurerm_subnet" "main" {
 }
 
 resource "azurerm_resource_group" "main" {
-  location   = "polandcentral"
-  name       = "rg-airline-data-engineering"
+  location = "polandcentral"
+  name     = "rg-airline-data-engineering"
   lifecycle {
     prevent_destroy = true
   }
@@ -22,7 +22,7 @@ resource "azurerm_virtual_network" "main" {
   name                           = "vnet-polandcentral-1"
   private_endpoint_vnet_policies = "Disabled"
   resource_group_name            = azurerm_resource_group.main.name
-    lifecycle {
-        prevent_destroy = true
-    }
+  lifecycle {
+    prevent_destroy = true
+  }
 }
