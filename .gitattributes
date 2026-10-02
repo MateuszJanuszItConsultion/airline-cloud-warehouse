@@ -1,0 +1,2 @@
+# Runbook content is compared byte-for-byte by Terraform - keep LF everywhere
+infra/terraform/**/*.ps1 text eol=lf
