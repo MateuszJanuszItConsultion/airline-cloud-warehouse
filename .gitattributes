@@ -1,3 +1,4 @@
 # Azure Automation stores runbook content with CRLF. Terraform compares
 # content byte-for-byte, so keep CRLF on disk on every machine (incl. CI).
 infra/terraform/**/*.ps1 text eol=crlf
+uv.lock text eol=lf
