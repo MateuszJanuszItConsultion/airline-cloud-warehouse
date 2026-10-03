@@ -16,11 +16,11 @@ variable "subnet_id" {
 variable "admin_username" {
   type        = string
   description = "The admin username for the virtual machine."
-  sensitive = true
+  sensitive   = true
 }
 
 variable "ssh_allowed_source_ip" {
   type        = string
   description = "The source IP address or CIDR block allowed to access the virtual machine via SSH."
-  sensitive = true
+  sensitive   = true
 }

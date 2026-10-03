@@ -138,8 +138,7 @@ Requires a `.env` file (not committed) with `DATABRICKS_HOST`, `DATABRICKS_HTTP_
 Install development dependencies (linting, pre-commit hooks):
 
 ```bash
-pip install -r requirements-dev.txt
-pre-commit install
+uv sync
 ```
 
 ## CI/CD

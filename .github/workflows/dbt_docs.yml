@@ -5,6 +5,8 @@ on:
     branches: [master]
     paths:
       - 'dbt_project/**'
+      - 'pyproject.toml'
+      - 'uv.lock'
   workflow_dispatch:
 
 permissions:
@@ -32,13 +34,13 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v7
 
-      - name: Set up Python
-        uses: actions/setup-python@v7
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: '3.13'
+          enable-cache: true
 
-      - name: Install dbt-databricks
-        run: pip install dbt-databricks==1.12.3
+      - name: Install dependencies
+        run: uv sync --locked --no-default-groups --group dbt
 
       - name: Set up dbt profiles.yml
         run: |
@@ -58,10 +60,10 @@ jobs:
           EOF
 
       - name: dbt deps
-        run: dbt deps
+        run: uv run --no-sync dbt deps
 
       - name: dbt docs generate
-        run: dbt docs generate
+        run: uv run --no-sync dbt docs generate
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v5

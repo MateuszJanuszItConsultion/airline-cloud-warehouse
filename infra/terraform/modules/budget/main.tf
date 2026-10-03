@@ -1,7 +1,7 @@
 locals {
   notifications = [
-    { threshold = 50,  threshold_type = "Actual" },
-    { threshold = 80,  threshold_type = "Actual" },
+    { threshold = 50, threshold_type = "Actual" },
+    { threshold = 80, threshold_type = "Actual" },
     { threshold = 100, threshold_type = "Forecasted" },
   ]
 }
