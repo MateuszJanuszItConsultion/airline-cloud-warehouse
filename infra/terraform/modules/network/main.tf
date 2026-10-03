@@ -1,7 +1,7 @@
 resource "azurerm_subnet" "main" {
-  address_prefixes                              = ["172.16.0.0/24"]
+  address_prefixes                              = var.subnet_address_prefixes
   default_outbound_access_enabled               = true
-  name                                          = "snet-polandcentral-1"
+  name                                          = var.subnet_name
   private_endpoint_network_policies             = "Disabled"
   private_link_service_network_policies_enabled = true
   resource_group_name                           = var.resource_group_name
@@ -9,12 +9,17 @@ resource "azurerm_subnet" "main" {
 }
 
 resource "azurerm_virtual_network" "main" {
-  address_space                  = ["172.16.0.0/16"]
+  address_space                  = var.vnet_address_space
   location                       = var.location
-  name                           = "vnet-polandcentral-1"
+  name                           = var.vnet_name
   private_endpoint_vnet_policies = "Disabled"
   resource_group_name            = var.resource_group_name
-  lifecycle {
-    prevent_destroy = true
-  }
+}
+
+resource "azurerm_management_lock" "delete_lock" {
+  count      = var.enable_delete_lock ? 1 : 0
+  name       = "lock-${var.vnet_name}-no-delete"
+  scope      = azurerm_virtual_network.main.id
+  lock_level = "CanNotDelete"
+  notes      = "Prevents deletion of the virtual network and its subnets by any tool."
 }
