@@ -14,7 +14,12 @@ resource "azurerm_virtual_network" "main" {
   name                           = var.vnet_name
   private_endpoint_vnet_policies = "Disabled"
   resource_group_name            = var.resource_group_name
-  lifecycle {
-    prevent_destroy = true
-  }
+}
+
+resource "azurerm_management_lock" "delete_lock" {
+  count      = var.enable_delete_lock ? 1 : 0
+  name       = "lock-${var.vnet_name}-no-delete"
+  scope      = azurerm_virtual_network.main.id
+  lock_level = "CanNotDelete"
+  notes      = "Prevents deletion of the virtual network and its subnets by any tool."
 }

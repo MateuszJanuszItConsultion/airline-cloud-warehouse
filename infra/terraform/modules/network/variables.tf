@@ -25,5 +25,11 @@ variable "subnet_name" {
 
 variable "subnet_address_prefixes" {
   type        = list(string)
-  description = "Address prefix for the subnet."
+  description = "Address prefixes for the subnet"
+}
+
+variable "enable_delete_lock" {
+  type        = bool
+  description = "Whether to enable a delete lock on the virtual network."
+  default     = false
 }

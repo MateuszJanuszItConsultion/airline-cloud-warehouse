@@ -15,4 +15,5 @@ module "network" {
   subnet_address_prefixes = ["172.16.0.0/24"]
   vnet_name               = "vnet-polandcentral-1"
   subnet_name             = "snet-polandcentral-1"
+  enable_delete_lock      = true
 }
