@@ -16,13 +16,30 @@ jobs:
     runs-on: [self-hosted, azure-airline-vm]
     steps:
       - name: Pull latest code
+        id: pull
         run: |
           cd ~/projects/airline-cloud-warehouse
+          OLD_SHA=$(git rev-parse HEAD)
           git fetch origin master
           git reset --hard origin/master
+          if git diff --quiet "$OLD_SHA" HEAD -- \
+              airflow/requirements.txt \
+              airflow/packages.txt \
+              airflow/Dockerfile \
+              airflow/docker-compose.override.yml; then
+            echo "restart_needed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "restart_needed=true" >> "$GITHUB_OUTPUT"
+          fi
 
-      - name: Restart Airflow
+      - name: Restart Airflow (image or container config changed)
+        if: steps.pull.outputs.restart_needed == 'true'
         run: |
           cd ~/projects/airline-cloud-warehouse/airflow
           astro dev stop
           astro dev start
+
+      - name: Check DAG import errors
+        run: |
+          cd ~/projects/airline-cloud-warehouse/airflow
+          astro dev run dags list-import-errors

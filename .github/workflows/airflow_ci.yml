@@ -24,7 +24,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v7
 
-      - name: Check for airflow changes
+      - name: Check for relevant changes
         id: filter
         uses: dorny/paths-filter@v4
         with:
@@ -32,27 +32,27 @@ jobs:
             airflow_changes:
               - 'airflow/**'
               - 'ingestion/**'
+              - 'streaming/**'
+              - 'databricks/notebooks/**'
+              - 'pyproject.toml'
+              - 'uv.lock'
 
-      - name: Set up Python
+      - name: Set up uv
         if: steps.filter.outputs.airflow_changes == 'true'
-        uses: actions/setup-python@v7
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: '3.12'
+          enable-cache: true
       
-      - name: Install dependencies
-        if: steps.filter.outputs.airflow_changes == 'true'      
-        run: |
-          pip install apache-airflow==3.3.0  
-          pip install -r airflow/requirements.txt       
-      
-      - name: Install ruff
-        if: steps.filter.outputs.airflow_changes == 'true'      
-        run: pip install ruff
-
       - name: Lint Python
-        if: steps.filter.outputs.airflow_changes == 'true'      
-        run: ruff check ingestion/ airflow/dags/ streaming/ databricks/notebooks/
+        if: steps.filter.outputs.airflow_changes == 'true'
+        run: uv run --locked --only-group dev ruff check ingestion/ airflow/dags/ streaming/ databricks/notebooks/
+
+      - name: Install Airflow test environment
+        if: steps.filter.outputs.airflow_changes == 'true'
+        run: |
+          uv venv .venv-airflow --python <wersja_Pythona>
+          uv pip install --python .venv-airflow apache-airflow==3.3.0 -r airflow/requirements.txt
 
       - name: Run DAG tests
-        if: steps.filter.outputs.airflow_changes == 'true'      
-        run: pytest airflow/tests/ -v
+        if: steps.filter.outputs.airflow_changes == 'true'
+        run: .venv-airflow/bin/python -m pytest airflow/tests/ -v

@@ -30,20 +30,18 @@ jobs:
           filters: |
             dbt_changes:
               - 'dbt_project/**'
+              - 'pyproject.toml'
+              - 'uv.lock'
 
-      - name: Set up Python
+      - name: Set up uv
         if: steps.filter.outputs.dbt_changes == 'true'
-        uses: actions/setup-python@v7
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: '3.13'
+          enable-cache: true
 
-      - name: Install dbt-databricks
+      - name: Install dependencies
         if: steps.filter.outputs.dbt_changes == 'true'
-        run: pip install dbt-databricks==1.12.3
-
-      - name: Install sqlfluff
-        if: steps.filter.outputs.dbt_changes == 'true'
-        run: pip install sqlfluff sqlfluff-templater-dbt
+        run: uv sync --locked --no-default-groups --group dev --group dbt
 
       - name: Set up dbt profiles.yml
         if: steps.filter.outputs.dbt_changes == 'true'
@@ -64,17 +62,17 @@ jobs:
           EOF
 
       - name: dbt deps
-        if: steps.filter.outputs.dbt_changes == 'true'      
-        run: dbt deps
+        if: steps.filter.outputs.dbt_changes == 'true'
+        run: uv run --no-sync dbt deps
 
       - name: Lint SQL
         if: steps.filter.outputs.dbt_changes == 'true'
-        run: sqlfluff lint models/
+        run: uv run --no-sync sqlfluff lint models/
 
       - name: dbt debug
         if: steps.filter.outputs.dbt_changes == 'true'
-        run: dbt debug
+        run: uv run --no-sync dbt debug
 
       - name: dbt build
         if: steps.filter.outputs.dbt_changes == 'true'
-        run: dbt build
+        run: uv run --no-sync dbt build

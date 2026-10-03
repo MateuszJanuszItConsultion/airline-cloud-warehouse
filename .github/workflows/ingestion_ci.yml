@@ -2,37 +2,40 @@ name: Ingestion Tests
 
 on:
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 permissions:
   contents: read
-  
+
 jobs:
   test-ingestion:
     runs-on: ubuntu-latest
 
     steps:
-        - name: Checkout repo
-          uses: actions/checkout@v7
+      - name: Checkout repo
+        uses: actions/checkout@v7
 
-        - name: Check for ingestion changes
-          id: filter
-          uses: dorny/paths-filter@v4
-          with:
-            filters: |
-              ingestion_changes:
-                - 'ingestion/**'
+      - name: Check for ingestion changes
+        id: filter
+        uses: dorny/paths-filter@v4
+        with:
+          filters: |
+            ingestion_changes:
+              - 'ingestion/**'
+              - 'dbt_project/airline_warehouse/seeds/**'
+              - 'pyproject.toml'
+              - 'uv.lock'
 
-        - name: Set up Python
-          if: steps.filter.outputs.ingestion_changes == 'true'        
-          uses: actions/setup-python@v7
-          with:
-            python-version: '3.13'
-        
-        - name: Install dependencies
-          if: steps.filter.outputs.ingestion_changes == 'true'
-          run: pip install pandas numpy pyarrow great_expectations==1.11.3 pytest
+      - name: Set up uv
+        if: steps.filter.outputs.ingestion_changes == 'true'
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
 
-        - name: Run ingestion tests
-          if: steps.filter.outputs.ingestion_changes == 'true'
-          run: pytest ingestion/tests/ -v
+      - name: Install dependencies
+        if: steps.filter.outputs.ingestion_changes == 'true'
+        run: uv sync --locked --no-default-groups --group dev --group ingestion
+
+      - name: Run ingestion tests
+        if: steps.filter.outputs.ingestion_changes == 'true'
+        run: uv run --no-sync pytest ingestion/tests/ -v
