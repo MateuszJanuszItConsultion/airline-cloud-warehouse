@@ -1,0 +1,32 @@
+resources:
+  jobs:
+    fetch_and_ingest_opensky:
+      name: fetch_and_ingest_opensky
+      tasks:
+        - task_key: fetch_and_ingest_opensky
+          disabled: false
+          email_notifications: {}
+          notebook_task:
+            notebook_path: ../src/autoloader_opensky_states.py
+            source: WORKSPACE
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          webhook_notifications: {}
+      email_notifications:
+        no_alert_for_skipped_runs: false
+        on_failure:
+          - ${workspace.current_user.userName}
+      max_concurrent_runs: 1
+      notification_settings:
+        no_alert_for_canceled_runs: false
+        no_alert_for_skipped_runs: false
+      performance_target: PERFORMANCE_OPTIMIZED
+      queue:
+        enabled: true
+      timeout_seconds: 0
+      trigger:
+        pause_status: UNPAUSED
+        periodic:
+          interval: 8
+          unit: HOURS
+      webhook_notifications: {}

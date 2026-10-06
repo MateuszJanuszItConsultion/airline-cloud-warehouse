@@ -1,0 +1,58 @@
+resources:
+  jobs:
+    kafka_produce_aircraft_telemetry:
+      name: kafka_produce_aircraft_telemetry
+      tasks:
+        - task_key: kafka_produce_aircraft_telemetry
+          disabled: false
+          email_notifications: {}
+          environment_key: kafka_produce_aircraft_telemetry_environment
+          run_if: ALL_SUCCESS
+          spark_python_task:
+            parameters:
+              - --n-aircraft
+              - "5"
+              - --secret-scope
+              - kafka-aiven
+            python_file: ingestion/produce_aircraft_telemetry.py
+            source: GIT
+          timeout_seconds: 0
+          webhook_notifications: {}
+      email_notifications:
+        no_alert_for_skipped_runs: false
+        on_duration_warning_threshold_exceeded:
+          - ${workspace.current_user.userName}
+        on_failure:
+          - ${workspace.current_user.userName}
+      environments:
+        - environment_key: Default
+          spec:
+            environment_version: "6"
+        - environment_key: kafka_produce_aircraft_telemetry_environment
+          spec:
+            dependencies:
+              - confluent-kafka==2.15.1
+            environment_version: "6"
+      git_source:
+        git_branch: master
+        git_provider: gitHub
+        git_url: https://github.com/MateuszJanuszItConsultion/airline-cloud-warehouse
+      health:
+        rules:
+          - metric: RUN_DURATION_SECONDS
+            op: GREATER_THAN
+            value: 300
+      max_concurrent_runs: 1
+      notification_settings:
+        no_alert_for_canceled_runs: false
+        no_alert_for_skipped_runs: false
+      performance_target: PERFORMANCE_OPTIMIZED
+      queue:
+        enabled: true
+      timeout_seconds: 900
+      trigger:
+        pause_status: UNPAUSED
+        periodic:
+          interval: 4
+          unit: HOURS
+      webhook_notifications: {}

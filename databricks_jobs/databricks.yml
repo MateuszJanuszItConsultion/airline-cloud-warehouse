@@ -7,6 +7,12 @@ include:
 targets:
   prod:
     mode: production
+    variables:
+      warehouse_id: f6d1448e1a70a105
     default: true
     workspace:
       root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
+
+variables:
+  warehouse_id:
+    description: SQL warehouse used by dbt tasks
