@@ -68,5 +68,8 @@ terraform.rc
 imports.tf
 generated.tf
 
+# Databricks Asset Bundles local cache
+.databricks/
+
 # --- other ---
 data/
