@@ -1,0 +1,45 @@
+name: databricks-validate
+
+on:
+  pull_request:
+    paths:
+      - "infra/terraform/databricks/**"
+      - "databricks_jobs/**"
+      - ".github/workflows/databricks-validate.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  terraform-validate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra/terraform/databricks
+    steps:
+      - uses: actions/checkout@v5
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.16.4"
+          terraform_wrapper: false
+      - name: fmt
+        run: terraform fmt -check
+      - name: init (no backend)
+        run: terraform init -input=false -backend=false
+      - name: validate
+        run: terraform validate -no-color
+
+  bundle-schema:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: databricks_jobs
+    steps:
+      - uses: actions/checkout@v5
+      - uses: databricks/setup-cli@main
+        with:
+          version: "1.14.1"
+      - name: generate bundle json schema
+        run: databricks bundle schema > "$RUNNER_TEMP/bundle-schema.json"
+      - name: validate bundle files against schema
+        run: pipx run check-jsonschema --schemafile "$RUNNER_TEMP/bundle-schema.json" databricks.yml resources/*.yml
