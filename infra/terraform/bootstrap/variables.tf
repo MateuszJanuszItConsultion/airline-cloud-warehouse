@@ -14,3 +14,9 @@ variable "storage_account_name" {
     error_message = "storage_account_name must be 3-24 characters, lowercase letters and digits only."
   }
 }
+
+variable "github_repository" {
+  description = "GitHub repository in owner/name format"
+  type        = string
+  default     = "MateuszJanuszItConsultion/airline-cloud-warehouse"
+}
