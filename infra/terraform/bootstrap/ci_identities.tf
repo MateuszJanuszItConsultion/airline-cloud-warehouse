@@ -1,6 +1,8 @@
 locals {
-  github_oidc_issuer = "https://token.actions.githubusercontent.com"
-  azure_ad_audience  = "api://AzureADTokenExchange"
+  github_oidc_issuer    = "https://token.actions.githubusercontent.com"
+  azure_ad_audience     = "api://AzureADTokenExchange"
+  github_subject_prefix = "repo:${var.github_owner}@${var.github_owner_id}/${var.github_repository_name}@${var.github_repository_id}"
+
 }
 
 # --- Plan identity: read-only, trusted for pull requests only ---
@@ -19,7 +21,7 @@ resource "azuread_application_federated_identity_credential" "ci_plan_pr" {
   description    = "Terraform plan on pull requests"
   issuer         = local.github_oidc_issuer
   audiences      = [local.azure_ad_audience]
-  subject        = "repo:${var.github_repository}:pull_request"
+  subject        = "${local.github_subject_prefix}:pull_request"
 }
 
 # --- Apply identity: write access, trusted for the production environment only ---
@@ -45,7 +47,7 @@ resource "azuread_application_federated_identity_credential" "ci_apply_productio
   description    = "Terraform apply from the production environment"
   issuer         = local.github_oidc_issuer
   audiences      = [local.azure_ad_audience]
-  subject        = "repo:${var.github_repository}:environment:production"
+  subject        = "${local.github_subject_prefix}:environment:production"
 }
 
 # 1. Plan: Reader role at the subscription scope

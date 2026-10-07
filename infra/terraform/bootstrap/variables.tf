@@ -15,8 +15,26 @@ variable "storage_account_name" {
   }
 }
 
-variable "github_repository" {
-  description = "GitHub repository in owner/name format"
+variable "github_owner" {
+  description = "GitHub account that owns the repository"
   type        = string
-  default     = "MateuszJanuszItConsultion/airline-cloud-warehouse"
+  default     = "MateuszJanuszItConsultion"
+}
+
+variable "github_owner_id" {
+  description = "Immutable numeric ID of the GitHub owner (part of the OIDC subject)"
+  type        = number
+  default     = 315073691
+}
+
+variable "github_repository_name" {
+  description = "GitHub repository name"
+  type        = string
+  default     = "airline-cloud-warehouse"
+}
+
+variable "github_repository_id" {
+  description = "Immutable numeric ID of the GitHub repository (part of the OIDC subject)"
+  type        = number
+  default     = 1327683054
 }
