@@ -40,7 +40,7 @@ resources:
         enabled: true
       timeout_seconds: 900
       trigger:
-        pause_status: UNPAUSED
+        pause_status: PAUSED
         periodic:
           interval: 8
           unit: HOURS
